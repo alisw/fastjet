@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 11-filter.cc 3249 2013-10-28 15:06:25Z salam $
+// $Id: 11-filter.cc 3252 2013-10-28 15:22:36Z salam $
 //
 // Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //

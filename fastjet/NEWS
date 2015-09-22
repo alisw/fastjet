@@ -1,5 +1,79 @@
-Release Notes for fastjet
+Release Notes for FastJet
 -------------------------
+
+================================================================
+Summary of changes from v3.1.2 -> v3.1.3: 2015-07-04
+================================================================
+This is a maintenance relase with the following changes:
+* disabled JetDefinition::operator(...) when CINT is detected, for
+  ROOT v5 compatibility.
+* worked around an issue with recent versions of CGAL and the clang
+  compiler 
+
+================================================================
+Summary of changes from v3.1.1 -> v3.1.2: 2015-03-12
+================================================================
+This is a bug-fix release. Main changes:
+
+* fixed rounding error issue in the "lazy" clustering strategies that,
+  in rare cases, caused infinite loops or crashes (reported by Jochen Ott).
+* added check on clustering's internal consistency; failure will throw
+  a new "InternalError" exception (derived from Error).
+* fixed bug in extraction of fjcore code that resulted in fjcore
+  failing for high multiplicities (~1000) (reported by Sergei Chekanov).
+  Only affects fjcore, not the full fastjet library.
+
+================================================================
+Summary of changes from v3.1.0 -> v3.1.1: 2015-01-06
+================================================================
+This is a bug-fix release. Main changes:
+
+* fix to area support for Filter with Cambridge/Aachen jets and subjets
+* GridMedianBackgroundEstimator has new constructor and RectangularGrid as public base
+* added virtual destructor to TilingBase class
+
+================================================================
+Summary of changes from v3.0.6 -> v3.1.0: 2014-09-30
+================================================================
+* Significant speed improvements (x1.5-10) for large N (few thousand-10^5)
+* FASTJET_VERSION_NUMBER preprocessor symbol, for easy in-code version testing
+* New JetDefinition::operator(): jets = jet_def(particles);
+* Native particle-mass support in PU estimation (rho_m())
+* Subtraction can use rho_m (set_use_rho_m()) and force m>0 (set_safe_mass())
+* Addition of Winner-Takes-All recomb. schemes (WTA_pt_scheme, WTA_modp_scheme)
+* SISCone updated to v3.0.0 (addition of SISCone with progressive removal)
+* New Recluster class, serving as base for Filter
+* New RectangularGrid class, base for GridMedianEstimator & GridJetPlugin
+* Fixed long-standing issue with coincident points in NlnN strategies
+* Other small additions and changes include:
+  * Selector::sum(particles) to get 4-vector sum of particles that pass selector
+  * pruned_jet.structure_of<Pruner>() has Rcut() and zcut() functions
+  * easy copying of Recombiner info: jet_def1.set_recombiner(jet_def2)
+* Various bug-fixes, build-system tweaks (e.g. default -O2 instead of -O3)
+
+================================================================
+Summary of changes from v3.1.0-beta.1 -> v3.1.0: 2014-09-30
+================================================================
+* Addition of Winner-Takes-All recomb. schemes (WTA_pt_scheme, WTA_modp_scheme)
+* SISCone updated to v3.0.0 (addition of SISCone with progressive removal)
+* minor changes including doxygen doc fixes and elimination of gcc warnings
+
+================================================================
+Summary of changes from v3.0.6 -> v3.1.0-beta.1: 2014-08-15
+================================================================
+* Significant speed improvements (x1.5-10) for large N (few thousand-10^5)
+* FASTJET_VERSION_NUMBER preprocessor symbol, for easy in-code version testing
+* New JetDefinition::operator(): jets = jet_def(particles);
+* Native particle-mass support in PU estimation (rho_m())
+* Subtraction can use rho_m (set_use_rho_m()) and force m>0 (set_safe_mass())
+* New Recluster class, serving as base for Filter
+* New RectangularGrid class, base for GridMedianEstimator & GridJetPlugin
+* Fixed long-standing issue with coincident points in NlnN strategies
+* Other small additions and changes include:
+  * Selector::sum(particles) to get 4-vector sum of particles that pass selector
+  * pruned_jet.structure_of<Pruner>() has Rcut() and zcut() functions
+  * easy copying of Recombiner info: jet_def1.set_recombiner(jet_def2)
+* Various bug-fixes, build-system tweaks (e.g. default -O2 instead of -O3)
 
 ================================================================
 Summary of changes from v3.0.5 -> v3.0.6: 2013-10-29

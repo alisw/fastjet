@@ -1,4 +1,4 @@
-AC_INIT([SISCone], [2.0.6])
+AC_INIT([SISCone], [3.0.0])
 AC_CONFIG_SRCDIR([siscone/siscone.cpp])
 AM_INIT_AUTOMAKE
 dnl uncomment the following line if you want to use autoheader

@@ -1,3 +1,23 @@
+2015-05-05: release of version 1.017 with
+* new contrib: ClusteringVetoPlugin, version 1.0.0
+
+2015-04-07: release of version 1.016 with
+* new contrib: ValenciaPlugin, version 2.0.0 (new e+e- clustering algorithms)
+
+2014-11-25: release of version 1.015 with
+* update of EnergyCorrelator to 1.1.0 (adds C1, C2 and D2 observables)
+
+2014-08-17: release of version 1.014 with
+* new contrib: SoftKiller 1.0.0 pileup removal tool (from Matteo
+  Cacciari, Gavin Salam and Gregory Soyez)
+* update of JetCleanser to version 1.0.1, fixing a C++11 compilation issue
+
+2014-07-09: release of version 1.013 with
+* Nsubjettiness updated to version 2.1.0 (from 1.0.3). Maintains
+  backward compatibility and adds a new recommended interface.
+* new contrib: RecursiveTools with v1.0.0 including ModifiedMassDropTagger
+  and SoftDrop (from Gavin Salam, Gregory Soyez and Jesse Thaler)
+
 2014-06-03: release of version 1.012 with
 * VariableR updated to version 1.1.1 (from 1.0.1), with optimized code 
   and new recommended interface.

@@ -1,7 +1,7 @@
-//STARTHEADER
-// $Id: ClusterSequence_Delaunay.cc 3114 2013-05-04 08:46:00Z salam $
+//FJSTARTHEADER
+// $Id: ClusterSequence_Delaunay.cc 3918 2015-07-03 14:19:13Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2014, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -12,9 +12,11 @@
 //  (at your option) any later version.
 //
 //  The algorithms that underlie FastJet have required considerable
-//  development and are described in hep-ph/0512210. If you use
+//  development. They are described in the original FastJet paper,
+//  hep-ph/0512210 and in the manual, arXiv:1111.6097. If you use
 //  FastJet as part of work towards a scientific publication, please
-//  include a citation to the FastJet paper.
+//  quote the version you use and include a citation to the manual and
+//  optionally also to hep-ph/0512210.
 //
 //  FastJet is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,7 +26,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with FastJet. If not, see <http://www.gnu.org/licenses/>.
 //----------------------------------------------------------------------
-//ENDHEADER
+//FJENDHEADER
 
 
 #include "fastjet/Error.hh"
@@ -67,8 +69,8 @@ void ClusterSequence::_delaunay_cluster () {
 
   // initialise our DNN structure with the set of points
   auto_ptr<DynamicNearestNeighbours> DNN;
-#ifndef DROP_CGAL // strategy = NlnN* are not supported if we drop CGAL...
   bool verbose = false;
+#ifndef DROP_CGAL // strategy = NlnN* are not supported if we drop CGAL...
   bool ignore_nearest_is_mirror = (_Rparam < twopi);
   if (_strategy == NlnN4pi) {
     DNN.reset(new Dnn4piCylinder(points,verbose));
@@ -84,13 +86,17 @@ void ClusterSequence::_delaunay_cluster () {
     err << "       supported because FastJet was compiled without CGAL"<<endl;
     throw Error(err.str());
     //assert(false);
-  }
+  } else
 #endif // DROP_CGAL
   {
-    ostringstream err;
-    err << "ERROR: Unrecognized value for strategy: "<<_strategy<<endl;
+    //ostringstream err;
+    //err << "ERROR: Unrecognized value for strategy: "<<_strategy<<endl;
+    //throw Error(err.str());
+    //-----------------------------------------------------------------
+    // The code should never reach this point, because the checks above
+    // should always handle all _strategy values for which 
+    // _delaunay_cluster() is called 
     assert(false);
-    throw Error(err.str());
   }
 
   // We will find nearest neighbour for each vertex, and include
@@ -119,6 +125,7 @@ void ClusterSequence::_delaunay_cluster () {
       SmallestDijPair = DijMap.begin()->second;
       jet_i = SmallestDijPair.first;
       jet_j = SmallestDijPair.second;
+      if (verbose) cout << "CS_Delaunay found recombination candidate: " << jet_i << " " << jet_j << " " << SmallestDij << endl; // GPS debugging
       // distance is immediately removed regardless of whether or not
       // it is used.
       // Some temporary testing code relating to problems with the gcc-3.2 compiler
@@ -132,7 +139,7 @@ void ClusterSequence::_delaunay_cluster () {
       recombine_with_beam = (jet_j == BeamJet);
       if (!recombine_with_beam) {Valid2 = DNN->Valid(jet_j);} 
       else {Valid2 = true;}
-
+      if (verbose) cout << "CS_Delaunay validities i & j: " << DNN->Valid(jet_i) << " " << Valid2 << endl;
     } while ( !DNN->Valid(jet_i) || !Valid2);
 
 
@@ -141,6 +148,7 @@ void ClusterSequence::_delaunay_cluster () {
     // later (only if at least 2 jets are around).
     if (! recombine_with_beam) {
       int nn; // will be index of new jet
+      if (verbose) cout << "CS_Delaunay call _do_ij_recomb: " << jet_i << " " << jet_j << " " << SmallestDij << endl; // GPS debug
       _do_ij_recombination_step(jet_i, jet_j, SmallestDij, nn);
       //OBS // merge the two jets, add new jet, remove old ones
       //OBS _jets.push_back(_jets[jet_i] + _jets[jet_j]);
@@ -162,6 +170,7 @@ void ClusterSequence::_delaunay_cluster () {
       points.push_back(newpoint);
     } else {
       // recombine the jet with the beam
+      if (verbose) cout << "CS_Delaunay call _do_iB_recomb: " << jet_i << " " << SmallestDij << endl; // GPS debug
       _do_iB_recombination_step(jet_i, SmallestDij);
       //OBS _add_step_to_history(n+i,_jets[jet_i].cluster_hist_index(),BeamJet,
       //OBS 			   Invalid, SmallestDij);
@@ -216,7 +225,7 @@ void ClusterSequence::_delaunay_cluster () {
 /// . otherwise do nothing
 ///
 void ClusterSequence::_add_ktdistance_to_map(
-                          const int & ii, 
+                          const int ii, 
 			  DistMap & DijMap,
 			  const DynamicNearestNeighbours * DNN) {
   
