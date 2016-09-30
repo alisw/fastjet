@@ -7,7 +7,7 @@
 // Run this example with
 //     ./example_advanced_usage < ../data/single-event.dat
 //
-//  $Id: example_advanced_usage.cc 828 2015-07-20 14:52:06Z jthaler $
+//  $Id: example_advanced_usage.cc 933 2016-04-04 22:23:32Z jthaler $
 //----------------------------------------------------------------------
 // This file is part of FastJet contrib.
 //
@@ -263,9 +263,7 @@ void analyze(const vector<PseudoJet> & input_particles) {
    
    for (int j = 0; j < 2; j++) { // Two hardest jets per event
       if (antikt_jets[j].perp() < 200) continue;
-      
-      vector<PseudoJet> jet_constituents = clust_seq.constituents(antikt_jets[j]);
-      
+            
       cout << "-----------------------------------------------------------------------------------------------" << endl;
       cout << "Analyzing Jet " << j + 1 << ":" << endl;
       cout << "-----------------------------------------------------------------------------------------------" << endl;

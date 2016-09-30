@@ -77,7 +77,7 @@
 
 \title{\sf FastJet user manual%
   \\ \large (for version
-  3.1.3%  %%%-VERSION-NUMBER (do not remove this comment; used
+  3.2.1%  %%%-VERSION-NUMBER (do not remove this comment; used
              %  for automatic version-number changes; version number must
              %  stay one a single line)
   )
@@ -4419,6 +4419,10 @@ If these functionalities are needed, the full \fastjet installation must be
 used. The code will be fully compatible, with the sole replacement of the
 header files and of the \ttt{fjcore} namespace with the \ttt{fastjet} one.
 
+Note that the \fjcore package comes with a basic example
+\ttt{01-basic.cc} as well as a fortran interface and an associated
+example.
+
 The \fjcore package has been available since release 3.0.4 of
 \fastjet, and tracks \fastjet versions.
 %
@@ -5278,25 +5282,85 @@ about individual jets.
 \label{sec:new-seq-rec}
 
 To enable users to more easily build plugins for new sequential
-recombination algorithms, \fastjet also provides a class \verb|NNH|,
-which provides users with access to an implementation of the
-nearest-neighbour heuristic for establishing and maintaining
-information about the closest pair of objects in a dynamic set of
-objects (see \cite{EppsteinHierarchical} for an introduction to this
-and other generic algorithms).
+recombination algorithms, \fastjet also provides several classes that
+give access to implementations of dynamic nearest neighbour finding: 
+\begin{itemize}
+\item A class \verb|NNH|, which provides users with access to an
+  implementation of the nearest-neighbour heuristic for establishing
+  and maintaining information about the closest pair of objects in a
+  dynamic set of objects with generic distance measures (see
+  \cite{EppsteinHierarchical} for an introduction to this and other
+  generic algorithms). In good cases (e.g.\ C/A-like distances) this
+  allows one to construct clustering that runs in $N^2$ time, though
+  its worst case can be as bad as $N^3$ (e.g.\ anti-$k_t$).
 %
-In good cases (C/A-like) this allows one to construct clustering that runs in
-$N^2$ time, though its worst case can be as bad as $N^3$ (e.g.\ anti-$k_t$).
+\item A class \verb|NNFJN2Plain|, for distances that can be written in
+  the form $d_{ij}= \min(x_i, x_j) D_{ij}$, $d_{iB} = x_i D_{iB}$,
+  making use of the FastJet lemma and maintaining a nearest neighbour
+  table for the $D_{ij}$ part of the distance measure.
+  %
+  Closely related code forms the basis of the internal \verb|N2Plain|
+  strategy for the generalised-$k_t$ algorithms, where
+  $x_i \equiv p_{ti}^{2p}$ and $D_{ij} \equiv \Delta R_{ij}^2/R^2$,
+  $D_{iB} = 1$.
+  %
+  If $D_{ij}$ is geometrical, then the nearest-neighbour maintenance
+  for the $D_{ij}$ can be done in $N^2$ time, ensuring an overall
+  $N^2$ algorithm.
 %
-It is a templated class and the template argument should be a class
-that stores the minimal information for each jet so as to be able to
-calculate interjet distances.
+\item A class \verb|NNFJN2Tiled|. This is intended for problems with a
+  cylindrical geometry. 
+  %
+  The user specifies the tile size and then the algorithm facilitates
+  clustering with distance measures of the form
+  $d_{ij}= \min(x_i, x_j) D_{ij}$ (like \verb|NNFJN2Plain|), with
+  the additional assumption that for a pair of particles $i$ and $j$
+  on non-identical, non-neighbouring tiles, $D_{iB}, D_{jB} <D_{ij}$, so
+  that $i$ and $j$ will never cluster with each other.
+  %
+  The code is closely related to that used for the internal
+  \verb|N2Tiled| strategy for generalised-$k_t$ algorithms.
+  %
+  The asymptotic scaling is also $N^2$, but at high multiplicities the
+  coefficient is usually significantly smaller than for
+  \verb|NNFJN2Tiled|.
+\end{itemize}
+All three classes derive from \texttt{NNBase}.\footnote{The \ttt{NNBase},
+  \ttt{NNFJN2Plain} and \ttt{NNFJN2Tiled} classes were introduced in
+  version 3.2 of \fastjet.}
 %
-It underlies the implementations of the Jade and $\ee$ Cambridge
-plugins.
+They are templated with an underlying (``BriefJet'') class, which
+stores the minimal information for each particles so as to be able to
+calculate interparticle and particle--beam distances.
 %
-The interested user should consult those codes for more information,
-as well as the header for the \verb|NNH| class.
+The $\ee$ Cambridge plugin relies on the \verb|NNH| class, the
+\ttt{JadePlugin} can use both \ttt{NNH} and \ttt{NNFJN2Plain}, while all
+three \verb|NN***| classes are used in the VariableR contrib's plugin.
+%
+The interested user should consult those plugins for examples, and the
+headers of the \verb|NN***| classes for more detailed information.
+
+
+% To enable users to more easily build plugins for new sequential
+% recombination algorithms, \fastjet also provides a class \verb|NNH|,
+% which provides users with access to an implementation of the
+% nearest-neighbour heuristic for establishing and maintaining
+% information about the closest pair of objects in a dynamic set of
+% objects (see \cite{EppsteinHierarchical} for an introduction to this
+% and other generic algorithms).
+% %
+% In good cases (C/A-like) this allows one to construct clustering that runs in
+% $N^2$ time, though its worst case can be as bad as $N^3$ (e.g.\ anti-$k_t$).
+% %
+% It is a templated class and the template argument should be a class
+% that stores the minimal information for each jet so as to be able to
+% calculate interjet distances.
+% %
+% It underlies the implementations of the Jade and $\ee$ Cambridge
+% plugins.
+% %
+% The interested user should consult those codes for more information,
+% as well as the header for the \verb|NNH| class.
 
 
 
@@ -5727,6 +5791,16 @@ are demanded of a program that is increasingly widely used.
 %
 Table~\ref{tab:deprecated} lists the cases where such considerations
 have led us to deprecate and/or remove functionality.
+%
+Note that the series of ``CSAB'' methods marked as deprecated in
+\fastjet~v3.2 are direct consequences of
+CSAB::median\_pt\_per\_unit\_area() already being marked as deprecated in
+v3.0.
+
+As of \fastjet~v3.2, whenever supported by the compiler, a
+``deprecation'' message will be issued at compilation
+time.\footnote{This is not available for all deprecated methods due
+  to a bug with gcc 5.1 amd 5.2.}
 
 
 \begin{table}
@@ -5741,10 +5815,10 @@ have led us to deprecate and/or remove functionality.
     CS::set\_jet\_finder(...)    & 2.1 & 3.0 & pass a JetDefinition to constructor\\
     CS::set\_jet\_algorithm(...) & 2.1 & 3.0 & pass a JetDefinition to constructor\\
     CS::CS(particles, R, ...)    & 2.1 & 3.0 & CS::CS(particles, jet\_def)\\
-    JD(jet\_alg, R, strategy)    & 2.1 & -   & JD(jet\_alg, R, recomb\_scheme, strategy)\\
+    JD(jet\_alg, R, strategy)    & 2.1 & --  & JD(jet\_alg, R, recomb\_scheme, strategy)\\
     \midrule
     %----------------------------------------------------------------------
-    JetFinder       & 2.3    & -   & JetAlgorithm \\
+    JetFinder       & 2.3    & --  & JetAlgorithm \\
     SISConePlugin.hh  
                     & 2.3    & 3.0  & fastjet/SISConePlugin.hh (idem.\ other plugins)\\
     ActiveAreaSpec  & 2.3   &  --  & AreaDefinition \& GhostedAreaSpec\\
@@ -5768,6 +5842,19 @@ have led us to deprecate and/or remove functionality.
     CS::plugin\_associate\_extras(auto\_ptr) 
                    & 3.1    &  --  &
                    CS::plugin\_associate\_extras(Extras *)\\
+    \midrule %------------------------------------------------------------
+    SharedPtr::operator()
+                   & 3.2    &  --  & SharedPtr::get()\\
+    CSAB::median\_rho\_*()
+                   & 3.2    &  --  & BackgroundEstimator\\
+    CSAB::get\_median\_rho\_and\_sigma()
+                   & 3.2    &  --  & BackgroundEstimator\\ 
+    CSAB::subtracted\_jet()
+                   & 3.2    &  --  & Subtractor\\
+    CSAB::subtracted\_jets()
+                   & 3.2    &  --  & Subtractor\\
+    CSAB::subtracted\_pt()
+                   & 3.2    &  --  & Subtractor\\
     \bottomrule %=========================================================
   \end{tabular}
   \caption{Summary of interfaces and features of earlier versions that have been
@@ -6285,3 +6372,5 @@ in {\it Proc. of the APS/DPF/DPB Summer Study on the Future of
 \end{document}
 
 
+
+%  LocalWords:  NNBase

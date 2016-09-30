@@ -1,4 +1,4 @@
-// $Id: GenericSubtractor.hh 864 2015-09-21 10:40:15Z gsoyez $
+// $Id: GenericSubtractor.hh 861 2015-09-21 10:35:22Z gsoyez $
 //
 // Copyright (c) 2012-, Matteo Cacciari, Jihun Kim, Gavin P. Salam and Gregory Soyez
 //

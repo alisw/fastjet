@@ -1,3 +1,79 @@
+2016-06-21  Gregory Soyez  <soyez@fastjet.fr>
+
+	* VERSION:
+	* NEWS:
+	Switched version number over to 1.024 (in view of a release)
+	Updated the release notes
+
+	* contribs.svn:
+	switched to Nsubjettiness 2.2.4
+
+2016-06-01  Gregory Soyez  <soyez@fastjet.fr>
+
+	* contribs.svn:
+	switched VariableR over to v1.2.1
+
+2016-04-28  Gregory Soyez  <soyez@fastjet.fr>
+
+	* VERSION:
+	* NEWS:
+	Switched version number over to 1.023 (in view of a release)
+	Updated the release notes
+
+	* contribs.svn:
+	switched to Nsubjettiness 2.2.3
+
+2016-03-31  Gregory Soyez  <soyez@fastjet.fr>
+
+	* VERSION:
+	set version number to 1.022 prior to the release
+
+2016-03-30  Gavin Salam  <gavin.salam@cern.ch>
+
+	* utils/check.sh (DIFF):
+	provided more output in cases where the check fails.
+
+	* NEWS:
+	minor tweak to NEWS
+
+2016-03-30  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	drafted for the release of fjcontrib-1.022
+
+	* contribs.svn:
+	switched GenericSubtractor over to version 1.3.1
+
+2016-03-29  Gregory Soyez  <soyez@fastjet.fr>
+
+	* contribs.svn:
+	switched VariableR over to 1.2.0 and Nsubjettiness to 2.2.2
+
+2016-03-10  Gregory Soyez  <soyez@fastjet.fr>
+
+	* scripts/internal/check-updates.sh:   *** ADDED ***
+	added an internal script that checks if the list in contribs.svn
+	is up-to-date
+
+2016-03-09  Gregory Soyez  <soyez@fastjet.fr>
+
+	* contribs.svn:
+	switched ConstituentSubtractor over to version 1.1.1
+
+2015-10-12  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	* VERSION:
+	prepared for release 1.021 including QCDAwarePlugin 1.0.0
+
+	* contribs.svn:
+	added QCDAwarePlugin to the list of included contribs
+
+2015-10-05  Matteo Cacciari <cacciari@lpthe.jussieu.fr>
+
+        * scripts/internal/release-fjcontrib.sh
+        fixed harmless typo 
+
 2015-10-05  Matteo Cacciari <cacciari@lpthe.jussieu.fr>
 
         * Makefile.in

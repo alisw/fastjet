@@ -1,4 +1,4 @@
-AC_INIT([FastJet],[3.1.3])
+AC_INIT([FastJet],[3.2.1])
 AC_CONFIG_SRCDIR([src/JetDefinition.cc])
 AM_INIT_AUTOMAKE(tar-ustar)
 
@@ -136,6 +136,81 @@ AC_ARG_ENABLE(extra-warnings,
 if [[ "$ENABLE_EXTRA_WARNINGS_FLAG" == "yes" ]] ; then
    AM_CXXFLAGS=${AM_CXXFLAGS}" -ansi -pedantic -Wextra -Wshadow "
 fi
+
+
+dnl-------------------------------------------------------------------
+dnl check if a few modern compiler options are availabble
+
+dnl --------- disable deprecated auto_ptr interface ------------------
+dnl This requires the --disable-auto-ptr option 
+dnl which is currently not the default but will become in a future
+dnl release (or might disappear altogether)
+AC_ARG_ENABLE(auto-ptr,
+	[  --enable-auto-ptr  compile the deprecated parts of the interface using auto-ptr [default=yes]],
+	[ENABLE_AUTO_PTR_INTERFACE="$enableval"],
+	[ENABLE_AUTO_PTR_INTERFACE="yes"])
+if [[ "$ENABLE_AUTO_PTR_INTERFACE" == "yes" ]] ; then
+   AC_DEFINE(HAVE_AUTO_PTR_INTERFACE, [], [compile the deprecated parts of the interface using auto-ptr])   
+fi
+
+
+dnl---------- [[deprecated]] --> HAVE_CXX14_DEPRECATED ---------------
+AC_MSG_CHECKING([[if $CXX ${AM_CXXFLAGS} $CXXFLAGS supports the "[[deprecated]]" keyword]])
+AC_LANG_PUSH(C++)
+save_CXXFLAGS="$CXXFLAGS"
+CXXFLAGS="${AM_CXXFLAGS} $CXXFLAGS -Werror -Wno-error=deprecated-declarations"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[class A{public:  [[deprecated]] void test() {}}; int main(void){ A a; a.test(); return 0;}]])],
+    [ac_compiler_has_requested_support="yes"],[ac_compiler_has_requested_support="no"])
+CXXFLAGS="$save_CXXFLAGS"
+AC_LANG_POP(C++)
+if [[ "$ac_compiler_has_requested_support" == "yes" ]] ; then
+   AC_DEFINE(HAVE_CXX14_DEPRECATED, [], [compiler supports c++14 deprecated keyword])
+fi
+AC_MSG_RESULT([$ac_compiler_has_requested_support])
+
+dnl------ _attribute__((deprecated)) --> HAVE_GNUCXX_DEPRECATED ------
+AC_MSG_CHECKING([[if $CXX ${AM_CXXFLAGS} $CXXFLAGS supports the "__attribute__((deprecated))" keyword]])
+AC_LANG_PUSH(C++)
+save_CXXFLAGS="$CXXFLAGS"
+CXXFLAGS="${AM_CXXFLAGS} $CXXFLAGS -Werror -Wno-error=deprecated-declarations"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[class A{public: __attribute__((__deprecated__)) void test() {}};int main(void){ A a; a.test(); return 0;}]])],
+    [ac_compiler_has_requested_support="yes"],[ac_compiler_has_requested_support="no"])
+CXXFLAGS="$save_CXXFLAGS"
+AC_LANG_POP(C++)
+if [[ "$ac_compiler_has_requested_support" == "yes" ]] ; then
+   AC_DEFINE(HAVE_GNUCXX_DEPRECATED, [], [compiler supports GNU c++ deprecated attribute])
+fi
+AC_MSG_RESULT([$ac_compiler_has_requested_support])
+
+dnl------------------- override --> HAVE_OVERRIDE ---------------------
+AC_MSG_CHECKING([[if $CXX ${AM_CXXFLAGS} $CXXFLAGS supports the "override" keyword]])
+AC_LANG_PUSH(C++)
+save_CXXFLAGS="$CXXFLAGS"
+CXXFLAGS="${AM_CXXFLAGS} $CXXFLAGS -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[class A{public: virtual void test(){}}; class B : public A{public: virtual void test() override{}}; int main(void){ B b; b.test(); return 0;}]])],
+    [ac_compiler_has_requested_support="yes"],[ac_compiler_has_requested_support="no"])
+CXXFLAGS="$save_CXXFLAGS"
+AC_LANG_POP(C++)
+if [[ "$ac_compiler_has_requested_support" == "yes" ]] ; then
+   AC_DEFINE(HAVE_OVERRIDE, [], [compiler supports the "override" keyword])
+fi
+AC_MSG_RESULT([$ac_compiler_has_requested_support])
+
+dnl--- explicit (for operators in class) --> HAVE_EXPLICIT_FOR_OPERATORAS ---
+AC_MSG_CHECKING([[if $CXX ${AM_CXXFLAGS} $CXXFLAGS supports the "explicit" keyword for operators]])
+AC_LANG_PUSH(C++)
+save_CXXFLAGS="$CXXFLAGS"
+CXXFLAGS="${AM_CXXFLAGS} $CXXFLAGS -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[class A{public: explicit operator bool(){return true;}}; int main(void){ A a; bool b=bool(a); if (b) b=false; return 0;}]])],
+    [ac_compiler_has_requested_support="yes"],[ac_compiler_has_requested_support="no"])
+CXXFLAGS="$save_CXXFLAGS"
+AC_LANG_POP(C++)
+if [[ "$ac_compiler_has_requested_support" == "yes" ]] ; then
+   AC_DEFINE(HAVE_EXPLICIT_FOR_OPERATORS, [], [compiler supports the "explicit" keyword for operators])
+fi
+AC_MSG_RESULT([$ac_compiler_has_requested_support])
+
+
 
 dnl-------------------------------------------------------------------
 dnl deal with the choice of shared/static libs
@@ -523,6 +598,7 @@ CONFIG_SUMMARY+="  Shared libraries           "${enable_shared}"\n"
 CONFIG_SUMMARY+="  Static libraries           "${enable_static}"\n"
 CONFIG_SUMMARY+="  Debug flag                 "$ENABLE_DEBUG_FLAG"\n"
 CONFIG_SUMMARY+="  CGAL support               "${ENABLE_CGAL_FLAG}"\n"
+#CONFIG_SUMMARY+="  C++11 features             "${ENABLE_CXX11FEATURES_FLAG}"\n"
 AC_PLUGIN_SUMMARY([yes])
 CONFIG_SUMMARY+="  Monolithic plugins lib     "$monolithic"\n"
 AC_SUBST(CONFIG_SUMMARY)

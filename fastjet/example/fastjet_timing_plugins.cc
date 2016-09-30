@@ -1,5 +1,5 @@
 //STARTHEADER
-// $Id: fastjet_timing_plugins.cc 3838 2015-03-04 15:56:55Z cacciari $
+// $Id: fastjet_timing_plugins.cc 4076 2016-03-08 19:35:25Z soyez $
 //
 // Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
@@ -545,7 +545,10 @@ int main (int argc, char ** argv) {
   } 
   if (all_algs || cmdline.present("-jade")) {
 #ifdef FASTJET_ENABLE_PLUGIN_JADE
-    jet_defs.push_back( JetDefinition(new JadePlugin()));
+    JadePlugin::Strategy jade_strategy =
+      JadePlugin::Strategy(cmdline.value<int>("-jade-strategy",
+                                              JadePlugin::strategy_NNFJN2Plain));
+    jet_defs.push_back( JetDefinition(new JadePlugin(jade_strategy)));
 #else  // FASTJET_ENABLE_PLUGIN_JADE
     is_unavailable("Jade");
 #endif // FASTJET_ENABLE_PLUGIN_JADE
@@ -590,7 +593,7 @@ int main (int argc, char ** argv) {
   if (all_algs || 
       cmdline.present("-kt") || 
       (jet_defs.size() == 0 && !found_unavailable))  {
-    jet_defs.push_back( JetDefinition(kt_algorithm, ktR, strategy));
+    jet_defs.push_back( JetDefinition(kt_algorithm, ktR, E_scheme, strategy));
   }
 
   string filename = cmdline.value<string>("-file", "");
@@ -689,7 +692,8 @@ int main (int argc, char ** argv) {
   for (int irepeat = 0; irepeat < repeat ; irepeat++) {
     int nparticles = particles.size();
     try {
-    auto_ptr<ClusterSequence> clust_seq;
+    // one could use a unique_ptr here, but SharedPtr is available independently of C++ standard
+    SharedPtr<ClusterSequence> clust_seq;
     if (do_areas) {
 #ifndef __FJCORE__
       clust_seq.reset(new ClusterSequenceArea(particles,jet_def,area_def));

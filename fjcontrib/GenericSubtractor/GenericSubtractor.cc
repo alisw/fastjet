@@ -1,4 +1,4 @@
-// $Id: GenericSubtractor.cc 864 2015-09-21 10:40:15Z gsoyez $
+// $Id: GenericSubtractor.cc 920 2016-03-29 21:57:47Z gsoyez $
 //
 // Copyright (c) 2012-, Matteo Cacciari, Jihun Kim, Gavin P. Salam and Gregory Soyez
 //
@@ -485,7 +485,7 @@ double GenericSubtractor::_component_subtraction(
   for (unsigned i = 0; i < n; i++) {
     // make a subsiduary shape that returns just the i^{th} component
     // (an auto_ptr makes sure memory usage is safe)
-    auto_ptr<const FunctionOfPseudoJet<double> > shape(shape_ptr->component_shape(i));
+    SharedPtr<const FunctionOfPseudoJet<double> > shape(shape_ptr->component_shape(i));
     subtracted2_components[i] = (*this)(*shape, jet, component_info);
     subtracted1_components[i] = component_info.first_order_subtracted();
     subtracted3_components[i] = component_info.third_order_subtracted();
