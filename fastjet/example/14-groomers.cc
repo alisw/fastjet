@@ -16,9 +16,9 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 14-groomers.cc 3302 2013-12-28 10:15:34Z salam $
+// $Id: 14-groomers.cc 4354 2018-04-22 07:12:37Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

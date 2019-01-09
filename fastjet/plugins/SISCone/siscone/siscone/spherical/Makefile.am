@@ -10,6 +10,7 @@ lib_LTLIBRARIES = libsiscone_spherical.la
 libsiscone_spherical_la_CXXFLAGS = $(AM_CXXFLAGS) -I$(srcdir)/../.. -I../..
 libsiscone_spherical_la_SOURCES = geom_2d.cpp momentum.cpp hash.cpp\
    vicinity.cpp protocones.cpp split_merge.cpp siscone.cpp
+libsiscone_spherical_la_LIBADD = ../libsiscone.la
 
 EXTRA_DIST = makefile.static
 

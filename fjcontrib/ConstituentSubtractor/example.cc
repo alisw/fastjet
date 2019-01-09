@@ -1,4 +1,4 @@
-// $Id: example.cc 893 2015-11-06 09:10:35Z berta $
+// $Id: example.cc 1116 2018-05-03 14:39:27Z berta $
 //
 //----------------------------------------------------------------------
 // Example on how to use this contribution
@@ -24,6 +24,11 @@
 // along with this code. If not, see <http://www.gnu.org/licenses/>.
 //----------------------------------------------------------------------
 
+
+#include "fastjet/ClusterSequenceArea.hh"
+#include "fastjet/Selector.hh"
+#include "fastjet/tools/JetMedianBackgroundEstimator.hh"
+#include "ConstituentSubtractor.hh" // In external code, this should be fastjet/contrib/ConstituentSubtractor.hh
 
 #include "functions.hh"
 

@@ -1,7 +1,7 @@
-//STARTHEADER
-// $Id: fastjetfortran.cc 4059 2016-03-03 20:49:48Z soyez $
+//FJSTARTHEADER
+// $Id: fastjetfortran.cc 4355 2018-04-22 15:38:54Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -12,9 +12,11 @@
 //  (at your option) any later version.
 //
 //  The algorithms that underlie FastJet have required considerable
-//  development and are described in hep-ph/0512210. If you use
+//  development. They are described in the original FastJet paper,
+//  hep-ph/0512210 and in the manual, arXiv:1111.6097. If you use
 //  FastJet as part of work towards a scientific publication, please
-//  include a citation to the FastJet paper.
+//  quote the version you use and include a citation to the manual and
+//  optionally also to hep-ph/0512210.
 //
 //  FastJet is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,13 +26,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with FastJet. If not, see <http://www.gnu.org/licenses/>.
 //----------------------------------------------------------------------
-//ENDHEADER
+//FJENDHEADER
 
 #include <iostream>
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 #include "fastjet/Selector.hh"
 #include "fastjet/SISConePlugin.hh"
+//#include <thread>
 
 using namespace std;
 using namespace fastjet;
@@ -44,6 +47,12 @@ namespace fwrapper {
   SharedPtr<JetDefinition::Plugin> plugin;
   JetDefinition jet_def;
   SharedPtr<ClusterSequence> cs;
+  // replace the above with thread local version if you want
+  // this interface to work in a (reasonably) thread-safe way.
+  // thread_local vector<PseudoJet> input_particles, jets;
+  // thread_local SharedPtr<JetDefinition::Plugin> plugin;
+  // thread_local JetDefinition jet_def;
+  // thread_local SharedPtr<ClusterSequence> cs;
 
   /// helper routine to transfer fortran input particles into 
   void transfer_input_particles(const double * p, const int & npart) {

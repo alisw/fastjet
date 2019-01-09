@@ -13,9 +13,9 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 10-subjets.cc 2742 2011-11-22 22:27:08Z salam $
+// $Id: 10-subjets.cc 4354 2018-04-22 07:12:37Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

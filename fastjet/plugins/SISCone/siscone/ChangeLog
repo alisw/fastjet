@@ -1,3 +1,38 @@
+2018-10-01  Gregory Soyez  <soyez@fastjet.fr>
+
+	Release of SISCone 3.0.4
+
+	* NEWS:
+	set the proper release date
+
+2018-09-26  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	fixed typos (FJ release number, ...)
+
+	* configure.ac:
+	* Doxyfile:
+	* doc/html/*.html:
+	changed version to 3.0.4
+
+	* NEWS:
+	prepared for the release of SISCone 3.0.4
+
+	* siscone/spherical/Makefile.am:
+	added libsiscone as a dependence of libsiscone_spherical
+
+2018-09-19  Gregory Soyez  <soyez@fastjet.fr>
+
+	* BUGS:
+	updated email addresses (mostly testing the new HEPforge system)
+
+2016-08-03  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* Doxyfile:
+	* doc/html/*.html:
+	changed version to 3.0.4-devel
+
 2016-08-03  Gregory Soyez  <soyez@fastjet.fr>
 
 	Release of SISCone 3.0.3

@@ -44,7 +44,7 @@ if MONOLITHIC_PLUGINS
 lib_LTLIBRARIES = libfastjetplugins.la
 libfastjetplugins_la_SOURCES=
 nodist_EXTRA_libfastjetplugins_la_SOURCES = dummy.cc
-libfastjetplugins_la_LIBADD =
+libfastjetplugins_la_LIBADD = ../src/libfastjet.la
 if BUILD_PLUGIN_SISCONE
 libfastjetplugins_la_LIBADD += SISCone/libSISConePlugin.la
 endif
