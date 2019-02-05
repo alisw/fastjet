@@ -361,20 +361,6 @@ class ClusterSequence {
     _extras.reset(extras_in);
   }
 
-  /// the plugin can associate some extra information with the
-  /// ClusterSequence object by calling this function
-  /// 
-  /// As of FJ v3.1, this is deprecated, in line with the deprecation
-  /// of auto_ptr in C++11
-#ifndef SWIG
-#ifdef FASTJET_HAVE_AUTO_PTR_INTERFACE
-  FASTJET_DEPRECATED_MSG("Please use ClusterSequence::plugin_associate_extras(Extras * extras_in)) instead")
-  inline void plugin_associate_extras(std::auto_ptr<Extras> extras_in){
-    _extras.reset(extras_in.release());
-  }
-#endif
-#endif //SWIG
-
   /// returns true when the plugin is allowed to run the show.
   inline bool plugin_activated() const {return _plugin_activated;}
 
