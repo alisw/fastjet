@@ -16,9 +16,9 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 04-constituents.cc 2704 2011-11-16 11:11:10Z soyez $
+// $Id: 04-constituents.cc 4354 2018-04-22 07:12:37Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

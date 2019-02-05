@@ -1,4 +1,675 @@
-2016-03-17  Gregory Soyez  <soyez@fastjet.fr>
+2018-10-01  Gregory Soyez  <soyez@fastjet.fr>
+
+	* Release of FastJet fastjet-3.3.2
+
+2018-10-01  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	  changed version to 3.3.2
+
+2018-09-26  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	drafted NEWS for 3.3.2 release
+
+	* plugins/GridJet/Makefile.am:
+	* plugins/D0RunICone/Makefile.am:
+	* plugins/CMSIterativeCone/Makefile.am:
+	* plugins/Jade/Makefile.am:
+	* plugins/EECambridge/Makefile.am:
+	* plugins/ATLASCone/Makefile.am:
+	* plugins/TrackJet/Makefile.am:
+	* plugins/NestedDefs/Makefile.am:
+	* plugins/D0RunIICone/Makefile.am:
+	* plugins/PxCone/Makefile.am:
+	* plugins/CDFCones/Makefile.am:
+	* plugins/SISCone/Makefile.am:
+	made all the lib<plugin_name>Plugin (non-monolithic build) depend
+	on libfastjet
+
+	* plugins/SISCone/Makefile.am:
+	added a dependence of the produced library (single or monolithic)
+	on libsiscone and libsisconespherical
+
+	* plugins/Makefile.am:
+	made libfastjetplugin (and all the individual plugin libs for
+	non-monolithic biulds) depend on libfastjet
+
+2018-09-19  Gregory Soyez  <soyez@fastjet.fr>
+
+	* tools/Makefile.am (libfastjettools_la_LIBADD):
+	made libfastjettools depend on libfastjet (issue raised by
+	Jan Strube <jstrube@uoregon.edu>)
+
+2018-09-19  Gavin Salam  <gavin.salam@cern.ch>
+
+	* changed external link for SISCone to reflect new hepforge
+	setup. 
+
+2018-04-24  Gavin Salam  <gavin.salam@cern.ch>
+
+        * Doxyfile
+        * configure.ac
+        * doc/fastjet-doc.tex
+        * include/fastjet/config_win.h
+	updated version number to 3.3.2-devel
+
+2018-04-24  Gavin Salam  <gavin.salam@cern.ch>
+
+	* Release of FastJet fastjet-3.3.1
+
+2018-04-23  Gavin Salam  <gavin.salam@cern.ch>
+
+	* NEWS
+        * Doxyfile
+        * configure.ac
+        * doc/fastjet-doc.tex
+	* include/fastjet/config_win.h
+	preparing for 3.3.1 release
+
+	* COPYING:
+	changed initial paragraph to indicate that FJ license is GPL v2 or
+	later (rather than just v2), in accord with the headers of the
+	source files.
+
+2018-04-22  Gavin Salam  <gavin.salam@cern.ch>
+
+	* various/(*.hh|cc)
+	* scripts/preamble-fjcore.txt:
+	* scripts/update-headers.pl:
+	better at handling cases where copyright is a single year (though
+	it could end up reading 2018-2018); also now handles the C++ files
+	in the fortran_wrapper directory; and recognises fjcore files,
+	leaving the fjcore indicator in there. It also updates the
+	preamble-fjcore file.
+
+	* **/*.cc **/*.hh:
+	* scripts/preamble-fjcore.txt:
+	updated copyright date on FJ files to 2018
+
+2018-04-21  Gavin Salam  <gavin.salam@cern.ch>
+
+	* fortran_wrapper/fastjetfortran.cc:
+	commented out changes that help with thread safety in
+	fastjetfortran. (Plan for future is to introduce an ifdef)
+
+2017-09-26  Gregory Soyez  <soyez@fastjet.fr>
+
+	* m4/CGAL.m4:
+	removed debugging comment
+
+	* configure.ac:
+	remove unused CGAL variable
+
+	* m4/CGAL.m4:
+	revamped the CGAL detection script to also search for libraries in
+	lib64 and lib32 subdirectories when CGAL (or Boost for CGAL_ paths
+	are supplied by the user
+
+	Cleaned unused bits in the process
+
+2017-09-18  Gregory Soyez  <soyez@fastjet.fr>
+
+	* include/fastjet/PseudoJet.hh:
+	fixed issue + added safegards for the computation of theta and
+	cos_theta
+
+2017-09-08  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	started drafting a NEWS for 3.4.0(?)
+
+	* PseudoJet.hh:
+	added theta() and cos_theta() PseudoJet member functions as
+	well as theta(pja, pjb) and cos_theta(pja,pjb) functions
+
+	* m4/CGAL.m4 (ACX_CHECK_CGAL):
+	added an option --with-cgal-boostdir to allow specifying a
+	non-standard Boost installation path used to install CGAL
+
+2017-08-31  Gavin Salam  <gavin.salam@cern.ch>
+
+	* plugins/SISCone/SISConeBasePlugin.cc:
+	fixed erroneous UserScaleBase::StructureType -> UserScaleBase as
+	reported by attila.krasznahorkay@cern.ch.
+
+2017-08-02  Gregory Soyez  <soyez@fastjet.fr>
+
+	* include/fastjet/JetDefinition.hh:
+	fixed typo in comment
+
+2017-07-12  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	changed version to 3.3.1-devel
+
+2017-07-12  Gregory Soyez  <soyez@fastjet.fr>
+
+	* Release of FastJet 3.3.0
+
+2017-07-12  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	minor tweaks to the 3.3.0 release text
+
+	* NEWS:
+	set release date to today (tentative)
+
+	* scripts/preamble-fjcore.txt:
+	updated the copyright dates
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	changed version to 3.3.0
+
+2017-06-23  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	inserted the NEWS for the 3.2.2 relaese (from the branch)
+
+2017-06-23  Gavin Salam  <gavin.salam@cern.ch>
+
+	* NEWS
+	extended template for 3.3.0 (including thanks)
+
+        * doc/fastjet-doc.tex
+	added discussion of JetDefinitionXParam
+
+        * example/python/01-basic.py
+        * example/python/02-area.py
+        * example/python/03-tools.py
+        * example/python/04-multi-event.py
+        * example/python/05-user-info.py
+        * example/python/06-selector.py
+        * example/python/07-recombiner.py
+	updated docstring to mention use of fastjet-config --pythonpath
+	(rather than some fixed path) and in some cases added missing
+	brief explanation of what the example does.
+
+        * example/python/08-exception.py:
+	revamped the example to illustrate errors raised with invalid R
+	for a JetDefinition (makes example simple, and arguably more useful?)
+
+2017-06-22  Gregory Soyez  <soyez@fastjet.fr>
+
+	* example/python/08-exception.py:          *** ADDED ***
+	started to work on an example showing how to handle fastjet::Error
+	exceptions in python
+
+	* pyinterface/FastJetPythonExtensions.hh (JetDefinition*Param):
+	added helpers to solve the issue that integer parameters in JD
+	ctors are handled as values for the eRecombinationScheme enum
+	rather ythan float arguments (R or xtra_param). One can now use
+	  JetDefinition0Param(scheme, strategy)
+	  JetDefinition1Param(R, scheme, strategy)
+	  JetDefinition2Param(R, xtra_param, scheme, strategy)
+	where the scheme and strategy are optional.
+
+	* doc/fastjet-doc.tex:
+	fixed a trivial typo + added a sentence to the description of the
+	user-defined recombiners in python.
+
+2017-06-21  Gavin Salam  <gavin.salam@cern.ch>
+
+	* scripts/mksnapshot.sh:
+	this now generates a patch for the snapshots.html file and echoes
+	commands to apply it; mostly tested, but not yet with an actual
+	snapshot. (Implementation not necessarilly optimally efficient?)
+
+2017-06-20  Gavin Salam  <gavin.salam@cern.ch>
+
+	* pyinterface/tests/:                      *** ADDED ***
+	* pyinterface/tests/sel_str_memcheck.py:   *** ADDED ***
+	* pyinterface/tests/fjexception.py:        *** ADDED ***
+	added some of the code used for tests...
+
+	* pyinterface/fastjet.i:
+	added handling of fastjet::Error exceptions.
+
+	* include/fastjet/Error.hh (Error):
+	added description() member function, in line with what's provided
+	by other classes.
+
+2017-06-19  Gregory Soyez  <soyez@fastjet.fr>
+
+	* example/python/Makefile.am:
+	added examples 06 (selector) and 07 (recombiner) to the
+	distributed tarball
+
+2017-06-19  Gavin Salam  <gavin.salam@cern.ch>
+
+	* example/python/01-basic.py:
+	* example/python/02-area.py:
+	* example/python/04-multi-event.py:
+	* example/python/05-user-info.py:
+	* example/python/06-selector.py:
+	* example/python/07-recombiner.py:
+
+	removed use of builtins (still seems to work Python 2.7 and 3.6). 
+
+2017-06-19  Gregory Soyez  <soyez@fastjet.fr>
+
+	* pyinterface/FastJetPythonExtensions.hh:
+	tried to use the __name__ attribute to disentangle python objects
+	from functions and return the proper description for selectors
+	accordingly
+
+2017-06-18  Gavin Salam  <gavin.salam@cern.ch>
+
+	* example/python/07-recombiner.py (main):
+	also prints out jet definition with a user-defined recombiner.
+
+	* pyinterface/FastJetPythonExtensions.hh:
+	added cpp_string_from_py_str(...) and
+	pp_string_from_str_py_obj(...) helper functions to get the
+	str output of a python object and convert into a C++ string.
+
+	This uses PyUnicode_AsUTF8 calls for Py3 and normal
+	PyString_AsString calls for Py2. To be seen how robust this is,
+	but seems to solve the issue found below with segfaults.
+
+	The implementation also solves a memory leak issue (failure to
+	XDECREF result of PyObject_Str).
+
+2017-06-16  Gavin Salam  <gavin.salam@cern.ch>
+
+	* pyinterface/FastJetPythonExtensions.hh (SelectorWorker):
+
+	The issue with 06-selector.py seems to be in processing the string
+	from the python selector, and in particular the worker calls
+	PyString_AsString -- see line 90 for details. No solution found as
+	yet...
+
+	* example/python/01-basic.py:
+	* example/python/02-area.py:
+	* example/python/03-tools.py: *** FIX (UGLY OUTPUT) ***
+	* example/python/04-multi-event.py:
+	* example/python/05-user-info.py:
+	* example/python/06-selector.py: *** FIX (SEGFAULT PY3) ***
+	* example/python/07-recombiner.py:
+
+	modified them to be compatible simultaneously with python 2.7 and
+	python 3.x
+
+2017-06-16  Gregory Soyez  <soyez@fastjet.fr>
+
+	* pyinterface/README-for-devel:
+	added a few replies/thoughts to open questions
+
+	* pyinterface/FastJetPythonExtensions.hh:
+	removed (seemingly) unnecessary local copies of PseudoJet
+
+	* pyinterface/fastjet.i:
+	corrected a misleading comment
+
+2017-06-15  Gavin Salam  <gavin.salam@cern.ch> + Matteo
+
+	* pyinterface/fastjet.i: 
+	* pyinterface/FastJetPythonExtensions.hh: 
+	* pyinterface/README-for-devel: 
+
+	added some notes / queries (see GPS tags in code)
+
+	* example/python/06-selector.py (HasPID):
+	made this a new-style class (i.e. added (object) at the end). 
+
+2017-05-23  Gregory Soyez  <soyez@fastjet.fr>
+
+	*** BROUGHT FROM THE 3.2.X-devel BRANCH ON 2017-07-12 ***
+
+	Note: issues found when compiling fjcore with [[deprecated]]. This
+	is related to the fact that fjcore is built w -ansi which
+	conflicts w the normal build with gcc6 (with support for
+	[[deprecated]]). Compiling w --enable-extra-warnings instead shows
+	some issues with SISCone replacement of auto_ptr by unique_ptr
+	(SISCone sees it as supported but then it conflicts with the -ansi
+	in FJ). The two fixes below go around those issues.
+
+	* configure.ac:
+	removed the -ansi flag from the "--enable-extra-warnings" option
+	since this is asking for trouble with default c++11 support (like
+	gcc6)
+
+	* include/fastjet/internal/deprecated.hh:
+	explicitly excluded the [[deprecated]] variant from fjcore.
+
+2017-05-22  Gregory Soyez  <soyez@fastjet.fr>
+
+	* example/python/07-recombiner.py:
+	* example/python/06-selector.py:
+	* pyinterface/FastJetPythonExtensions.hh:
+	cleaned and added comments + fixed a few typos
+
+2017-05-19  Gavin Salam  <gavin.salam@cern.ch>
+
+	* tools/fastjet/tools/MassDropTagger.hh:
+	* tools/MassDropTagger.cc:
+	Following report of issue 2017-05-FPE-in-MDT associated with
+	negative (squared) masses in MassDropTagger, changed behaviour of
+	pathological cases:
+
+	- if the parent has zero or negative mass, an empty jet is
+	returned (and a warning is printed) [before the program just
+	carried on running using the negative mass^2]
+
+	- if the heavier child subjet has negative (squared) mass, then mu
+	is set to subjet.m()/parent.m(), which is also negative [before
+	you could get NaN, zero or a postive ratio of two negative things]
+
+
+2017-04-24  Gregory Soyez  <soyez@fastjet.fr>
+
+	* example/python/07-recombiner.py:             *** ADDED ***
+
+	added an eample of a user-defined recombiner
+
+	* pyinterface/fastjet.i:
+	* pyinterface/FastJetPythonExtensions.hh:
+
+	added functionalities to specify a user-defined recombiner in
+	Python. The user should implement a class that provides
+	    def __init__(self):
+	    def __str__(self):
+            def preprocess(self, pa):
+	    def recombine(self, pa, pb): # returns the recombined PseudoJet
+	and then call
+	    jet_def.set_python_recombiner(...)
+	with an instance of that class as an argument.
+
+2017-02-28  Gregory Soyez  <soyez@fastjet.fr>
+
+	* example/python/06-selector.py:
+	used a class-based selector and wrote is_photon as HasPID(22)
+
+	* pyinterface/FastJetPythonExtensions.hh:
+	descrpition now uses the "class_or_function" __str__ if available
+
+	Note that for functions this currently produces a message of the
+	form "function at address ..." which is not 100% elegant (but
+	we'll live with it for the time being)
+
+2017-02-24  Gavin Salam  <gavin.salam@cern.ch>
+
+	* fastjet-config.in (usage):
+	edited the --pythonpath help text (+ one typo)
+
+2017-02-23  Gregory Soyez  <soyez@fastjet.fr>
+
+	* fastjet-config.in:
+	added a --pythonpath option
+
+2017-02-15  Gavin Salam  <gavin.salam@cern.ch>
+
+	* scripts/mksnapshot.sh:
+	another fix for remote snapshots...
+
+2017-02-12  Gavin Salam  <gavin.salam@cern.ch>
+
+	* example/python/06-selector.py:
+	moved the example over to selectors also for pileup selection.
+
+	* scripts/mksnapshot.sh:
+	tried to update this so that links for tagging and copying are
+	correct even remotely from Jussieu.
+
+2017-02-11  Gavin Salam  <gavin.salam@cern.ch>
+
+	* example/python/06-selector.py (print_jets):
+	* pyinterface/FastJetPythonExtensions.hh:
+	small tweaks to comments, details of how example is written, etc.
+
+2017-02-10  Gregory Soyez  <soyez@fastjet.fr>
+
+	* example/python/06-selector.py:      *** ADDED ***
+	* pyinterface/FastJetPythonExtensions.hh:
+	added a SelectorPython that currently takes a function (jet->Bool)
+	controlling what passes the selector. See 06-selector.py for a
+	simple usage.
+
+	At this stage, more testing (incl memory management) is needed
+
+	* pyinterface/Makefile.am:
+	fixed fate of swig_wrp.cpp and fastjet.i during make dist
+
+2017-02-10  Gavin Salam  <gavin.salam@cern.ch>
+
+	* src/genconfig.sh:
+	fixed issue with sed on some platforms that cannot handle "+" in
+	the regexp.
+
+	* example/python/05-user-info.py:  *** ADDED ***
+	* example/python/Makefile.am (EXTRA_DIST): 
+	added an example that show how one can use Python user information
+
+	* pyinterface/FastJetPythonExtensions.hh: *** ADDED ***
+	* pyinterface/makefile.internal:
+	* pyinterface/Makefile.am:
+	started adding tools to allow extensions of FastJet functionality
+	through python, in particular PseudoJet user-info support.
+
+2017-02-10  Gregory Soyez  <soyez@fastjet.fr>
+
+	* pyinterface/Makefile.am:
+	added some workarounds to avoid libtool install showing a
+	potentially misleading message about where python modules have
+	been instsalled (this can differ between the fastjet.py and
+	_fastjet.so files on some installations)
+	Instead print a message of our own.
+
+2017-02-09  Gregory Soyez  <soyez@fastjet.fr>
+
+	* regression-tests/nightly-check.pl:
+	added minimal checks that the python interface compiles smoothly
+
+2017-02-09  Gavin Salam  <gavin.salam@cern.ch>
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	changed version to 3.3.0-devel
+
+	* example/python/README: *** ADDED ***
+	with info on path settings, etc.
+
+	* NEWS:
+	started to prepare release info
+
+	* pyinterface/fastjet-doc.i: ** ADDED **
+	automatically generated as follows (but do this manually)
+
+	   doxygen
+	   cd pyinterface
+	   make -f makefile.internal fastjet-doc.i
+
+	Currently using doxygen v. 1.8.x
+
+	* m4/ax_swig_python.m4 (AX_SWIG_PYTHON):
+	fixed issue with AX_PYTHON_DEVEL
+
+2017-02-09  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	generated the makefile in the example/python directory
+
+	* pyinterface/Makefile.am:
+	removed unnecessary _ that generated (harmless) warnings with
+	automake
+
+	* m4/ax_swig_python.m4:              *** ADDED ***
+	* m4/ax_swig_enable_cxx.m4:          *** ADDED ***
+	added missing m4 macros (on some systems)
+
+	* CHECKLIST:
+	added a note about running doxy2swig.py and swig
+
+	* example/python/Makefile.am:        *** ADDED ***
+	* example/Makefile.am:
+	shipped the python examples with the distribution
+
+	* configure.ac:
+	* pyinterface/Makefile.am:
+	* m4/ax_pkg_swig.m4:                 *** ADDED ***
+	added support, via --enable-swig, to run swi instead of using the
+	swig_wrap.cpp provided in the distriution..
+
+2017-02-09  Gavin Salam  <gavin.salam@cern.ch>
+
+	* pyinterface/fastjet.i:
+	added more __str__ implementations.
+
+	* example/python/01-basic.py: (moved from pyinterface/)
+	simplified it, made output more similar to ../01-basic.cc
+
+	* example/python/02-areas.py:
+	small changes to output
+
+	* example/python/04-multi-event.py
+	this now contains the more advanced multi-event reading framework
+
+2017-02-09  Gregory Soyez  <soyez@fastjet.fr>
+
+	* pyinterface/makefile.internal:
+	pointed to the correct doxy2swig.py sccript (was missing the .py
+	extension) + removed fastjet-doc.i during make clean.
+
+	* Doxyfile:
+	updated to doxygen-1.8.12
+
+	explicitly excluded ILConeAlgorithm.hpp in the D0RunIICone
+	(causing trouble w swig xml doc and not being used anyway in the
+	html)
+
+2017-02-09  Gavin Salam  <gavin.salam@cern.ch>
+
+	* pyinterface/fastjet.i:
+	work in progress on docstring
+
+	* pyinterface/...:
+	work in progress on the examples, etc.
+
+	* Doxyfile:
+	enabled generator of XML documentation, for use by doxy2swig
+
+	* include/fastjet/PseudoJet.hh:
+	removed "[NOT FULLY TESTED]" from the boost and unboost function
+	documentation. 
+
+	* scripts/doxy2swig *** ADDED ***
+	to aid generation of documentation for the python interface
+
+
+2017-02-09  Gregory Soyez  <soyez@fastjet.fr>
+
+	* pyinterface/Makefile.am:
+	installed the python module in the site-packages directly (without
+	a fastjet subdirectory)
+
+	* pyinterface/__init__.py:
+	added (and installed) this so that python automatically finds the
+	fsatjet module from te parent directory
+
+	* include/fastjet/ClusterSequence.hh:
+	explicitly excluded the (deprecated) auto_ptr version of
+	ClusterSequence::plugin_associate_extras from the swig interface
+	(it seems like the auto_ptr was causing troubles with swig)
+
+	* pyinterface/Makefile.am (_fastjet_la_LIBADD):
+	added missing CGAL libs (when configured w CGAL enabled)
+
+2017-02-08  Gregory Soyez  <soyez@fastjet.fr>
+
+	* pyinterface/test.py       -> pyinterface/01-basic.py:
+	* pyinterface/test-area.py  -> pyinterface/02-area.py:
+	* pyinterface/test-tools.py -> pyinterface/03-tools.py:
+	renamed the files
+
+	* configure.ac:
+	* Makefile.am:
+	* pyinterface/Makefile.am:             *** ADDED ***
+	configure now acquired a --enable-pyext flag which builds
+	thepython interface.
+	Note: swig has to be run first to generate swig_wrap.cpp amf
+	fastjet.py. These files are included in the tarball (as well as
+	fastjet.i for completeness)
+
+	* pyinterface/test-area.py:            *** ADDED ***
+	added an example with areas and subtraction
+
+	* pyinterface/test-tools.py:           *** ADDED ***
+	added an example showing usage of tools
+
+	* pyinterface/fastjet.i:
+	added area support and tool (still in progress)
+
+	* pyinterface/Makefile:
+	also include tools
+
+2017-02-07  Gregory Soyez  <soyez@fastjet.fr>
+
+	* include/fastjet/PseudoJet.hh:
+	excluded the templated PseudoJet constructor from the python
+	interface (creates nasty issues w swig (e.g. vector allocators
+	with fastjet::PseudoJet::PseudoJet>)
+
+2017-02-07  Gavin Salam  <gavin.salam@cern.ch>
+
+	* testsuite/TestPseudoJet.hh (TestBase):
+	fixed issue in testing boosts
+
+2017-02-07  Gregory Soyez  <soyez@fastjet.fr> + Gavin
+
+	* include/fastjet/PseudoJet.hh:
+	disabled the templated reset<T> with swig
+
+	* include/fastjet/internal/deprecated.hh:
+	playing with swig: some advanced deprecated features do not behave
+	properly do disable them in swig
+
+2017-02-06  Gavin Salam  <gavin.salam@cern.ch>
+
+	* testsuite/TestSpecialEvents.hh:
+	modified constructors of JetDefs to eliminate a large number of
+	compilation warnings.
+
+	* testsuite/run_tests.cc (main):
+	* testsuite/TestPseudoJet.hh:
+	Added TestPJOperations to test various binary operations
+
+	* include/fastjet/PseudoJet.hh|cc:
+	operator+=, -=, *=, /= all had "void" as their return type;
+	now fixed this bug so that they return PseudoJet &
+	(observed to be an issue with Swig)
+
+2017-02-06  Gregory Soyez  <soyez@fastjet.fr> + Gavin
+
+	* pyinterface:
+	started to work on a swig-based pythin interface
+
+2016-10-25  Gregory Soyez  <soyez@fastjet.fr> + Gavin
+
+	* include/fastjet/NNFJN2Tiled.hh:
+	fixed type mismatched for diJ_plus_link (was pre-declared as a
+	class then declared as a struct)
+
+2016-08-05  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	changed version to 3.2.2-devel
+	+ reset the SISCone link to the trunk
+
+2016-08-04  Gregory Soyez  <soyez@fastjet.fr>
 
 	* Release of FastJet 3.2.1
 

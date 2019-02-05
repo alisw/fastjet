@@ -20,9 +20,9 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 11-filter.cc 3252 2013-10-28 15:22:36Z salam $
+// $Id: 11-filter.cc 4354 2018-04-22 07:12:37Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

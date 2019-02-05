@@ -1,4 +1,4 @@
-// $Id: functions.hh 898 2016-02-09 17:14:00Z berta $
+// $Id: functions.hh 1116 2018-05-03 14:39:27Z berta $
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet contrib.
@@ -23,10 +23,6 @@
 #include <iomanip>
 
 #include "fastjet/PseudoJet.hh"
-#include "fastjet/ClusterSequenceArea.hh"
-#include "fastjet/Selector.hh"
-#include "fastjet/tools/JetMedianBackgroundEstimator.hh"
-#include "ConstituentSubtractor.hh" // In external code, this should be fastjet/contrib/ConstituentSubtractor.hh
 
 using namespace fastjet;
 using namespace std;
@@ -67,10 +63,14 @@ public:
 void read_event(vector<PseudoJet> &hard_event, vector<PseudoJet> &full_event, vector<PseudoJet> *hard_event_charged=0, vector<PseudoJet> *pileup_event_charged=0){
   string line;
   int  nsub  = 0; // counter to keep track of which sub-event we're reading                                                                                                             
+  bool format_ptRapPhi=false;
   while (getline(cin, line)) {
     istringstream linestream(line);
     // take substrings to avoid problems when there are extra "pollution"                                                                                                               
-    // characters (e.g. line-feed).                                                                                                                                                     
+    // characters (e.g. line-feed).                                                                                                                     
+
+    if (line.substr(0,9) == "#PTRAPPHI") format_ptRapPhi=true;
+                                
     if (line.substr(0,4) == "#END") {break;}
     if (line.substr(0,9) == "#SUBSTART") {
       // if more sub events follow, make copy of first one (the hard one) here                                                                                                          
@@ -78,9 +78,19 @@ void read_event(vector<PseudoJet> &hard_event, vector<PseudoJet> &full_event, ve
       nsub += 1;
     }
     if (line.substr(0,1) == "#") {continue;}
-    double px,py,pz,E,pid,charge;
-    linestream >> px >> py >> pz >> E >> pid >> charge;
-    PseudoJet particle(px,py,pz,E);
+    PseudoJet particle(0,0,1,1);
+    double charge,pid;
+
+    if (format_ptRapPhi){
+      double pt,y,phi;
+      linestream >> pt >> y >> phi >> pid >> charge;
+      particle.reset_PtYPhiM(pt,y,phi);
+    }
+    else{
+      double px,py,pz,E;
+      linestream >> px >> py >> pz >> E >> pid >> charge;
+      particle.reset(px,py,pz,E);
+    }
 
     // push event onto back of full_event vector                                                                                                                                      
 

@@ -25,6 +25,10 @@ dnl Note: this is of no effect if a Makefile is used
 AC_ARG_WITH(cgaldir,
             [AC_HELP_STRING([--with-cgaldir=dir], [Assume the given directory for CGAL (CGAL >= 3.4)])])
 
+dnl al;lows to specify a non0-standard installation directory for Boost used by CGAL
+AC_ARG_WITH(cgal_boostdir,
+            [AC_HELP_STRING([--with-cgal-boostdir=dir], [Assume the given directory for Boost needed by CGAL (CGAL >= 3.4; requires an installed Boost)])])
+
 dnl define CGAL_MAKEFILE to be 
 dnl  1. the value given to --with-cgalmakefile
 dnl  2. the environment var
@@ -120,54 +124,89 @@ dnl we check if we can get the arguments ourselves. This method leave the option
 dnl a CGAL directory using the --with-cgaldir directive
 dnl If no dir are specified, CGAL will be searched for in standard places
 if test "$acx_cgal_found" == no; then
-   dnl check support for the floating-point specifications needed for CGAL
-   dnl  . gcc required -frounding-math
-   dnl  . icc requires -fp-model srticy
-   dnl    
-   dnl Note that clang does not support it but simply issues a
-   dnl warning. To avoid having that, we force it to be an error if it is
-   dnl not supported
-   dnl   
-   dnl also, icpc supports -Werror but does not seem to convert
-   dnl "unrecognised option" into an error, at least for icc 13.1.3
-   dnl that I've tested. Let's live with that for hte time being since
-   dnl it will just issue a $1006 command-line warning 
-   ADDITIONAL_CGAL_FLAGS=""
-   AC_LANG_PUSH(C++)
-   AX_CHECK_COMPILER_FLAGS([-frounding-math -Werror],[ADDITIONAL_CGAL_FLAGS=${ADDITIONAL_CGAL_FLAGS}" -frounding-math"])
-   AX_CHECK_COMPILER_FLAGS([-fp-model strict -Werror],[ADDITIONAL_CGAL_FLAGS=${ADDITIONAL_CGAL_FLAGS}" -fp-model strict"])
-   AC_LANG_POP(C++)
+    dnl check support for the floating-point specifications needed for CGAL
+    dnl  . gcc required -frounding-math
+    dnl  . icc requires -fp-model srticy
+    dnl    
+    dnl Note that clang does not support it but simply issues a
+    dnl warning. To avoid having that, we force it to be an error if it is
+    dnl not supported
+    dnl   
+    dnl also, icpc supports -Werror but does not seem to convert
+    dnl "unrecognised option" into an error, at least for icc 13.1.3
+    dnl that I've tested. Let's live with that for hte time being since
+    dnl it will just issue a $1006 command-line warning 
+    ADDITIONAL_CGAL_FLAGS=""
+    AC_LANG_PUSH(C++)
+    AX_CHECK_COMPILER_FLAGS([-frounding-math -Werror],[ADDITIONAL_CGAL_FLAGS=${ADDITIONAL_CGAL_FLAGS}" -frounding-math"])
+    AX_CHECK_COMPILER_FLAGS([-fp-model strict -Werror],[ADDITIONAL_CGAL_FLAGS=${ADDITIONAL_CGAL_FLAGS}" -fp-model strict"])
+    AC_LANG_POP(C++)
 
-
-    dnl First check if an installation dir has been supplied.
-    dnl The current flags have to be saved temporarily
-    save_LIBS="$LIBS"
-    save_LDFLAGS="$LDFLAGS"
-    save_CXXFLAGS="$CXXFLAGS"
-    save_CPPFLAGS="$CPPFLAGS"
-
-    CGAL_CXXFLAGS=""
-    CGAL_CPPFLAGS=""
-    CGAL_LDFLAGS=""
+    CGAL_CPPFLAGS="${ADDITIONAL_CGAL_FLAGS}"
     CGAL_LIBS=""
 
-    dnl check if a directory has bene specified
-    dnl in that case, we need to add a -I and -L arg to CXXFLAGS and LDFLAGS
-    dnl Note that the headers will be searched fo in ${cgaldir}/include
-    dnl and the libs in ${cgaldir}/libs
+    dnl check if some paths are provided
+    dnl
+    dnl note that some platforms install using a "lib64" prefix, so
+    dnl we'll use a stand-in that we'll replace later
+
+    dnl First check if a CGAL installation dir has been supplied.
     if test \! -z "$with_cgaldir"; then
         AC_MSG_CHECKING(CGAL in ${with_cgaldir})
-	LDFLAGS="${LDFLAGS} -L${with_cgaldir}/lib -Wl,-rpath,${with_cgaldir}/lib"
-	CXXFLAGS="${CXXFLAGS} -I${with_cgaldir}/include $ADDITIONAL_CGAL_FLAGS"
-	CPPFLAGS="${CPPFLAGS} -I${with_cgaldir}/include $ADDITIONAL_CGAL_FLAGS"
-
-	CGAL_CPPFLAGS="-I${with_cgaldir}/include"
-	CGAL_CXXFLAGS="-I${with_cgaldir}/include"
-	CGAL_LIBS="-L${with_cgaldir}/lib -Wl,-rpath,${with_cgaldir}/lib"
+	CGAL_CPPFLAGS="$CGAL_CPPFLAGS -I${with_cgaldir}/include"
+        libdir_found="no"
+        for libdircandidate in lib lib64 lib32; do
+            if test -d ${with_cgaldir}/${libdircandidate}; then
+                libdir_found="yes"
+                CGAL_LIBS="${CGAL_LIBS} -L${with_cgaldir}/${libdircandidate} -Wl,-rpath,${with_cgaldir}/${libdircandidate}"
+                break
+            fi
+        done
+        if test "$libdir_found" == yes; then
+            AC_MSG_RESULT([${libdircandidate}])
+        else 
+            AC_MSG_RESULT([no lib directory])
+            $2
+            exit
+        fi
     fi
 
-    CXXFLAGS=${CXXFLAGS}" $ADDITIONAL_CGAL_FLAGS"
-    CPPFLAGS=${CPPFLAGS}" $ADDITIONAL_CGAL_FLAGS"
+    dnl    dnl check if a directory has bee specified
+    dnl    dnl in that case, we need to add a -I and -L arg to CXXFLAGS and LDFLAGS
+    dnl    dnl Note that the headers will be searched fo in ${cgaldir}/include
+    dnl    dnl and the libs in ${cgaldir}/libs
+    dnl    if test \! -z "$with_cgaldir"; then
+    dnl        AC_MSG_CHECKING(CGAL in ${with_cgaldir})
+    dnl        LDFLAGS="${LDFLAGS} -L${with_cgaldir}/lib -Wl,-rpath,${with_cgaldir}/lib"
+    dnl        CXXFLAGS="${CXXFLAGS} -I${with_cgaldir}/include $ADDITIONAL_CGAL_FLAGS"
+    dnl        CPPFLAGS="${CPPFLAGS} -I${with_cgaldir}/include $ADDITIONAL_CGAL_FLAGS"
+    dnl    
+    dnl        CGAL_CPPFLAGS="${CGAL_CPPFLAGS} -I${with_cgaldir}/include"
+    dnl        CGAL_CXXFLAGS="${CGAL_CXXFLAGS} -I${with_cgaldir}/include"
+    dnl        CGAL_LIBS="${CGAL_LIBS} -L${with_cgaldir}/lib -Wl,-rpath,${with_cgaldir}/lib"
+    dnl    fi
+
+    dnl if a non-standard Boost location has been specified, add it to
+    dnl the compilation flags
+    if test \! -z "$with_cgal_boostdir"; then
+        AC_MSG_CHECKING(with Boost dir in ${with_cgal_boostdir})
+	CGAL_CPPFLAGS="$CGAL_CPPFLAGS -I${with_cgal_boostdir}/include"
+        libdir_found="no"
+        for libdircandidate in lib lib64 lib32; do
+            if test -d ${with_cgal_boostdir}/${libdircandidate}; then
+                libdir_found="yes"
+                CGAL_LIBS="${CGAL_LIBS} -L${with_cgal_boostdir}/${libdircandidate} -Wl,-rpath,${with_cgal_boostdir}/${libdircandidate}"
+                break
+            fi
+        done
+        if test "$libdir_found" == yes; then
+            AC_MSG_RESULT([${libdircandidate}])
+        else 
+            AC_MSG_RESULT([no lib directory])
+            $2
+            exit
+        fi
+    fi
 
     dnl search the CGAL headers
     dnl
@@ -181,45 +220,58 @@ if test "$acx_cgal_found" == no; then
     dnl   AC_LANG_PUSH(language)
     dnl followed by
     dnl   AC_LANG_POP(language)
+
+    dnl first save the current flags so we can restore them later if needed
+    save_LIBS="$LIBS"
+    save_LDFLAGS="$LDFLAGS"
+    save_CXXFLAGS="$CXXFLAGS"
+    save_CPPFLAGS="$CPPFLAGS"
+
+    CXXFLAGS=${CXXFLAGS}" $CGAL_CPPFLAGS"
+    CPPFLAGS=${CPPFLAGS}" $CGAL_CPPFLAGS"
+
     AC_LANG_PUSH(C++)
     AC_CHECK_HEADER([CGAL/Exact_predicates_inexact_constructions_kernel.h], [cgal_have_header=yes], [cgal_have_header=no])
     AC_LANG_POP(C++)
 
     dnl if the headers have been found, check for the libs
     if test "$cgal_have_header" == yes; then
-	CGAL_CPPFLAGS="${CGAL_CPPFLAGS} $ADDITIONAL_CGAL_FLAGS"
-	CGAL_CXXFLAGS="${CGAL_CXXFLAGS} $ADDITIONAL_CGAL_FLAGS"
-	AC_LANG_PUSH(C++)
+        dnl prepare the linker flags for test
+        LIBS="${save_LIBS}"
+        LDFLAGS="${save_LDFLAGS} $CGAL_LIBS"
+
+        AC_LANG_PUSH(C++)
 	AC_CHECK_LIB(CGAL, main, cgal_have_lib=yes, cgal_have_lib=no)
 	AC_LANG_POP(C++)
 	if test "$cgal_have_lib" == yes; then
 	    CGAL_LIBS=${CGAL_LIBS}" -lCGAL"
-	    dnl AC_CHECK_LIB(mpfr, main, [CGAL_LIBS="$CGAL_LIBS -lmpfr"])
+            dnl AC_CHECK_LIB(mpfr, main, [CGAL_LIBS="$CGAL_LIBS -lmpfr"])
 	    AC_CHECK_LIB(gmp, main, [CGAL_LIBS="$CGAL_LIBS -lgmp"])
 	    dnl AC_CHECK_LIB(gmpxx, main, [CGAL_LIBS="$CGAL_LIBS -lgmpxx"])
 	    dnl AC_CHECK_LIB(CGALcore++, main, [CGAL_LIBS="$CGAL_LIBS -lCGALcore++"])
 
 	    dnl we can finally claim we've found CGAL!
 	    acx_cgal_found=yes
-	fi
+        fi
     fi 
 
-    dnl if the lib has not been found, reset the saved vars to their original values
+    dnl restore the compiler flags to their default
     LIBS="$save_LIBS"
     LDFLAGS="$save_LDFLAGS"
     CXXFLAGS="$save_CXXFLAGS"
     CPPFLAGS="$save_CPPFLAGS"
 
+    dnl if the lib has not been found, reset the saved vars to their original values
     if test "$acx_cgal_found" == no; then 
        CGAL_CPPFLAGS=""
-       CGAL_CXXFLAGS=""
-       CGAL_LDFLAGS=""
+       dnl CGAL_CXXFLAGS=""
+       dnl CGAL_LDFLAGS=""
        CGAL_LIBS=""
     fi
 fi
 
 AC_MSG_CHECKING(CGAL)
-if test "$acx_cgal_found" == yes; then 
+if test "$acx_cgal_found" == yes; then
 	AC_MSG_RESULT(yes);
 	$1
 else

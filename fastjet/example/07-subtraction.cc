@@ -10,9 +10,9 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 07-subtraction.cc 3670 2014-09-08 14:17:59Z soyez $
+// $Id: 07-subtraction.cc 4354 2018-04-22 07:12:37Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

@@ -15,13 +15,15 @@ check_script = ../utils/check.sh
 #------------------------------------------------------------------------
 # things that are specific to this contrib
 NAME=ConstituentSubtractor
-SRCS=ConstituentSubtractor.cc
-EXAMPLES=example_whole_event example_whole_event_using_charged_info example
-INSTALLED_HEADERS=ConstituentSubtractor.hh
+SRCS=ConstituentSubtractor.cc IterativeConstituentSubtractor.cc RescalingClasses.cc
+EXAMPLES=example_whole_event example_whole_event_iterative example example_background_rescaling example_whole_event_using_charged_info
+INSTALLED_HEADERS=ConstituentSubtractor.hh IterativeConstituentSubtractor.hh RescalingClasses.hh
 #------------------------------------------------------------------------
 
 CXXFLAGS+= $(shell $(FASTJETCONFIG) --cxxflags)
 LDFLAGS += -lm $(shell $(FASTJETCONFIG) --libs)
+#CXXFLAGS+= $(shell root-config --cflags)
+#LDFLAGS+= -lm $(shell root-config --libs)
 
 OBJS  = $(SRCS:.cc=.o)
 EXAMPLES_SRCS  = $(EXAMPLES:=.cc)

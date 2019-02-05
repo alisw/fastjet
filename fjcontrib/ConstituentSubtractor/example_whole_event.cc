@@ -1,4 +1,4 @@
-// $Id: example_whole_event.cc 893 2015-11-06 09:10:35Z berta $
+// $Id: example_whole_event.cc 1141 2018-06-28 12:29:14Z berta $
 //
 //----------------------------------------------------------------------
 // Example on how to do pileup correction on the whole event
@@ -25,6 +25,11 @@
 //----------------------------------------------------------------------
 
 
+#include "fastjet/ClusterSequence.hh"
+#include "fastjet/Selector.hh"
+#include "fastjet/tools/GridMedianBackgroundEstimator.hh"
+#include "ConstituentSubtractor.hh" // In external code, this should be fastjet/contrib/ConstituentSubtractor.hh 
+
 #include "functions.hh"
 
 
@@ -34,59 +39,74 @@ using namespace fastjet;
 //----------------------------------------------------------------------
 int main(){
   // set up before event loop:
+  double max_eta=4; // specify the maximal pseudorapidity for the input particles. It is used for the subtraction. Particles with eta>|max_eta| are removed and not used during the subtraction (they are not returned). The same parameter should be used for the GridMedianBackgroundEstimator as it is demonstrated in this example. If JetMedianBackgroundEstimator is used, then lower parameter should be used  (to avoid including particles outside this range). 
+  double max_eta_jet=3; // the maximal pseudorapidity for selected jets. Not used for the subtraction - just for the final output jets.
   contrib::ConstituentSubtractor subtractor;
-  subtractor.set_max_standardDeltaR(1); // free parameter for the maximal allowed distance sqrt((y_i-y_k)^2+(phi_i-phi_k)^2) between particle i and ghost k
+  subtractor.set_distance_type(contrib::ConstituentSubtractor::deltaR); // free parameter for the type of distance between particle i and ghost k. There are two options: "deltaR" or "angle" which are defined as deltaR=sqrt((y_i-y_k)^2+(phi_i-phi_k)^2) or Euclidean angle between the momenta
+  subtractor.set_max_distance(0.3); // free parameter for the maximal allowed distance between particle i and ghost k
   subtractor.set_alpha(1);  // free parameter for the distance measure (the exponent of particle pt). The larger the parameter alpha, the more are favoured the lower pt particles in the subtraction process
   subtractor.set_ghost_area(0.01); // free parameter for the density of ghosts. The smaller, the better - but also the computation is slower.
+  subtractor.set_max_eta(max_eta); // parameter for the maximal eta cut
 
-  // event loop
+  // example selector for ConstituentSubtractor:
+  Selector sel_CS_correction = SelectorPhiRange(0,3) * SelectorEtaMin(-1.5) * SelectorEtaMax(0);
+  // subtractor.set_selector(&sel_CS_correction);             // uncomment in case you want to use selector. Only ghosts fulfilling this selector will be constructed. No selection on input particles is done. The selection on input particles is the responsibility of the user. However, the maximal eta cut (specified with "set_max_eta" function) is done always for both, ghosts and input particles.
+
+  subtractor.initialize();
+
+
+
+  // in event loop:
   // read in input particles
   vector<PseudoJet> hard_event, full_event;
   read_event(hard_event, full_event);
 
-  double maxEta=4;  // specify the maximal rapidity for the particles used in the subtraction
-  double maxEta_jet=3; // the maximal rapidity for selected jets
-
-  // keep the particles up to 4 units in rapidity
-  hard_event = SelectorAbsEtaMax(maxEta)(hard_event);
-  full_event = SelectorAbsEtaMax(maxEta)(full_event);
+  hard_event = SelectorAbsEtaMax(max_eta)(hard_event);
+  full_event = SelectorAbsEtaMax(max_eta)(full_event);
 
   cout << "# read an event with " << hard_event.size() << " signal particles and " << full_event.size() - hard_event.size() << " background particles with pseudo-rapidity |eta|<4" << endl;
 
  
-  // do the clustering with ghosts and get the jets
-  //----------------------------------------------------------
+  // jet definition and selector for jets
   JetDefinition jet_def(antikt_algorithm, 0.7);
-  AreaDefinition area_def(active_area_explicit_ghosts,GhostedAreaSpec(maxEta,1)); // the area definiton is used only for the jet backgroud estimator. It is not important for the ConstituentSubtractor when subtracting the whole event - this is not true when subtracting the individual jets
+  Selector sel_jets = SelectorNHardest(3) * SelectorAbsEtaMax(max_eta_jet);
 
-  ClusterSequenceArea clust_seq_hard(hard_event, jet_def, area_def);
-  ClusterSequenceArea clust_seq_full(full_event, jet_def, area_def);
-
-  Selector sel_jets = SelectorNHardest(3) * SelectorAbsRapMax(maxEta_jet);
-
+  // clustering of the hard-scatter event and uncorrected event
+  ClusterSequence clust_seq_hard(hard_event, jet_def);
+  ClusterSequence clust_seq_full(full_event, jet_def);
   vector<PseudoJet> hard_jets = sel_jets(clust_seq_hard.inclusive_jets());
   vector<PseudoJet> full_jets = sel_jets(clust_seq_full.inclusive_jets());
 
- // create what we need for the background estimation
-  //----------------------------------------------------------
-  JetDefinition jet_def_for_rho(kt_algorithm, 0.4);
-  Selector rho_range =  SelectorAbsEtaMax(maxEta-0.4);
-  //  ClusterSequenceArea clust_seq_rho(full_event, jet_def, area_def);  
-
-  JetMedianBackgroundEstimator bge_rho(rho_range, jet_def_for_rho, area_def);
-  BackgroundJetScalarPtDensity *scalarPtDensity=new BackgroundJetScalarPtDensity();
-  bge_rho.set_jet_density_class(scalarPtDensity); // this changes the computation of pt of patches from vector sum to scalar sum. The scalar sum seems more reasonable.
+  // background estimator
+  GridMedianBackgroundEstimator bge_rho(max_eta,0.5);
   bge_rho.set_particles(full_event);
   subtractor.set_background_estimator(&bge_rho);
 
   // this sets the same background estimator to be used for deltaMass density, rho_m, as for pt density, rho:
-  subtractor.set_common_bge_for_rho_and_rhom(true); // for massless input particles it does not make any difference (rho_m is always zero)
+  subtractor.set_common_bge_for_rho_and_rhom(true); // it does not make any difference for massless input particles (rho_m is always zero)
+
+  // print info (optional)
   cout << subtractor.description() << endl;
 
+  // the correction of the whole event with ConstituentSubtractor
+  vector<PseudoJet> corrected_event=subtractor.subtract_event(full_event);
 
-  vector<PseudoJet> corrected_event=subtractor.subtract_event(full_event,maxEta);
-  ClusterSequenceArea clust_seq_corr(corrected_event, jet_def, area_def);
+  // clustering of the corrected event
+  ClusterSequence clust_seq_corr(corrected_event, jet_def);
   vector<PseudoJet> corrected_jets = sel_jets(clust_seq_corr.inclusive_jets());
+
+
+  ios::fmtflags f( cout.flags() );
+  cout << setprecision(4) << fixed;
+  cout << endl << "Corrected particles in the whole event:" << endl;
+  for (unsigned int i=0; i<corrected_event.size(); i++){
+    const PseudoJet &particle = corrected_event[i];
+    cout << "pt = " << particle.pt()
+         << ", phi = " << particle.phi()
+         << ", rap = " << particle.rap()
+         << ", |mass| = " << fabs(particle.m()) << endl;
+  }
+  cout << endl;
 
   // shape variables:
   //----------------------------------------------------------
@@ -94,6 +114,7 @@ int main(){
 
   // subtract and print the result
   //----------------------------------------------------------
+  cout.flags( f );
   cout << setprecision(4);
   cout << "# original hard jets" << endl;
   for (unsigned int i=0; i<hard_jets.size(); i++){

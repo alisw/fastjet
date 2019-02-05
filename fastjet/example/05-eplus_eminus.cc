@@ -22,9 +22,9 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 05-eplus_eminus.cc 2684 2011-11-14 07:41:44Z soyez $
+// $Id: 05-eplus_eminus.cc 4354 2018-04-22 07:12:37Z salam $
 //
-// Copyright (c) 2005-2011, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

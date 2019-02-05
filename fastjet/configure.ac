@@ -1,4 +1,4 @@
-AC_INIT([FastJet],[3.2.1])
+AC_INIT([FastJet],[3.3.2])
 AC_CONFIG_SRCDIR([src/JetDefinition.cc])
 AM_INIT_AUTOMAKE(tar-ustar)
 
@@ -134,7 +134,7 @@ AC_ARG_ENABLE(extra-warnings,
 	[ENABLE_EXTRA_WARNINGS_FLAG="$enableval"],
 	[ENABLE_EXTRA_WARNINGS_FLAG="no"])
 if [[ "$ENABLE_EXTRA_WARNINGS_FLAG" == "yes" ]] ; then
-   AM_CXXFLAGS=${AM_CXXFLAGS}" -ansi -pedantic -Wextra -Wshadow "
+   AM_CXXFLAGS=${AM_CXXFLAGS}" -pedantic -Wextra -Wshadow "
 fi
 
 
@@ -263,7 +263,7 @@ fi
 dnl update compilation/link flags for the CGAL lib
 if [[ "x$ENABLE_CGAL_FLAG" == "xyes" ]] ; then
    AM_CXXFLAGS=${AM_CXXFLAGS}" $CGAL_CPPFLAGS "
-   CONFIG_LIBS=${CONFIG_LIBS}" $CGAL_LDFLAGS $CGAL_LIBS "
+   CONFIG_LIBS=${CONFIG_LIBS}" $CGAL_LIBS "
 else
    AM_CXXFLAGS=${AM_CXXFLAGS}" -DDROP_CGAL "
 dnl   CONFIG_CXXFLAGS=${CONFIG_CXXFLAGS}" -DDROP_CGAL "
@@ -505,7 +505,7 @@ AC_CONFIG_FILES( tools/Makefile tools/fastjet/Makefile tools/fastjet/tools/Makef
 dnl-------------------------------------------------------------------
 dnl make sure examples dir is there
 dnl-------------------------------------------------------------------
-AC_CONFIG_FILES( example/Makefile example/data/Makefile example/root/Makefile )
+AC_CONFIG_FILES( example/Makefile example/python/Makefile example/data/Makefile example/root/Makefile )
 
 dnl-------------------------------------------------------------------
 dnl and the documentation
@@ -521,6 +521,56 @@ dnl-------------------------------------------------------------------
 dnl sample fortran wrapper
 dnl-------------------------------------------------------------------
 AC_CONFIG_FILES( fortran_wrapper/Makefile )
+
+dnl-------------------------------------------------------------------
+dnl python interface
+dnl-------------------------------------------------------------------
+AC_MSG_CHECKING([whether to build the python interface])
+AC_ARG_ENABLE(pyext,
+	[  --enable-pyext          Enable the python interface [default=no]],
+	[ENABLE_PYEXT_FLAG="$enableval"],
+	[ENABLE_PYEXT_FLAG="no"])
+AC_MSG_RESULT(${ENABLE_PYEXT_FLAG})
+if [[ "$ENABLE_PYEXT_FLAG" == "yes" ]] ; then
+    AM_PATH_PYTHON
+    AC_ARG_VAR([PYTHON_INCLUDE], [Include flags for python, bypassing python-config])
+    AC_ARG_VAR([PYTHON_CONFIG], [Path to python-config])
+    AS_IF([test -z "$PYTHON_INCLUDE"], [
+        AS_IF([test -z "$PYTHON_CONFIG"], [
+            AC_PATH_PROGS([PYTHON_CONFIG],
+                          [python$PYTHON_VERSION-config python-config],
+                          [no],
+                          [`dirname $PYTHON`])
+            AS_IF([test "$PYTHON_CONFIG" = no], [AC_MSG_ERROR([cannot find python-config for $PYTHON.])])
+        ])
+        AC_MSG_CHECKING([python include flags])
+        PYTHON_INCLUDE=`$PYTHON_CONFIG --includes`
+        AC_MSG_RESULT([$PYTHON_INCLUDE])
+    ])
+
+    # at a deeper level, one may want to be able to run swig dynamically
+    #   
+    # In the end we want to ship swig_wrapper.cpp and fastjet.py together
+    # with the distribution but for development purposes (and possile
+    # incoherences w end-user configurations) it is good to have teh
+    # option to run swig automatically
+    AC_MSG_CHECKING([whether to run swig])
+    AC_ARG_ENABLE(swig,
+                  [  --enable-swig          Runs swig to update the python interface [default=no]],
+                  [ENABLE_SWIG_FLAG="$enableval"],
+                  [ENABLE_SWIG_FLAG="no"])
+    AC_MSG_RESULT(${ENABLE_SWIG_FLAG})
+    if [[ "$ENABLE_SWIG_FLAG" == "yes" ]] ; then
+        AX_PKG_SWIG([3.0.0], [], [AC_MSG_ERROR([SWIG explicitly requested but not found...]) ])
+        SWIG_ENABLE_CXX
+        SWIG_PYTHON
+    fi
+else
+    ENABLE_SWIG_FLAG="no"
+fi
+AM_CONDITIONAL(BUILD_PYEXT, test x$ENABLE_PYEXT_FLAG = xyes)
+AM_CONDITIONAL(BUILD_INCLUDES_SWIG, test x$ENABLE_SWIG_FLAG = xyes)
+AC_CONFIG_FILES( pyinterface/Makefile )
 
 dnl-------------------------------------------------------------------
 dnl split the version number in major.minor.patch[prerelease] version
@@ -601,6 +651,8 @@ CONFIG_SUMMARY+="  CGAL support               "${ENABLE_CGAL_FLAG}"\n"
 #CONFIG_SUMMARY+="  C++11 features             "${ENABLE_CXX11FEATURES_FLAG}"\n"
 AC_PLUGIN_SUMMARY([yes])
 CONFIG_SUMMARY+="  Monolithic plugins lib     "$monolithic"\n"
+CONFIG_SUMMARY+="  Python interface           "${ENABLE_PYEXT_FLAG}"\n"
+CONFIG_SUMMARY+="  Swig python generator      "${ENABLE_SWIG_FLAG}"\n"
 AC_SUBST(CONFIG_SUMMARY)
 
 
