@@ -1,7 +1,7 @@
 //FJSTARTHEADER
-// $Id: ClusterSequence.cc 4354 2018-04-22 07:12:37Z salam $
+// $Id: ClusterSequence.cc 4420 2019-11-29 09:28:20Z soyez $
 //
-// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2019, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -438,7 +438,7 @@ void ClusterSequence::print_banner() {
   (*ostr) << "# Please cite EPJC72(2012)1896 [arXiv:1111.6097] if you use this package\n";
   (*ostr) << "# for scientific work and optionally PLB641(2006)57 [hep-ph/0512210].   \n";
   (*ostr) << "#                                                                       \n";
-  (*ostr) << "# FastJet is provided without warranty under the terms of the GNU GPLv2.\n";
+  (*ostr) << "# FastJet is provided without warranty under the GNU GPL v2 or higher.  \n";
   (*ostr) << "# It uses T. Chan's closest pair algorithm, S. Fortune's Voronoi code";
 #ifndef DROP_CGAL
   (*ostr) << ",\n# CGAL ";

@@ -36,14 +36,15 @@ namespace contrib{
     _rhom_from_bge_rhom=false;
     _externally_supplied_rho_rhom=false;
     _do_mass_subtraction=false;
+    _masses_to_zero=true;
     _distance=deltaR;
     _alpha=0;
     _polarAngleExp=0;
     _max_distance=-1;
-    _remove_zero_pt_and_mtMinusPt_particles=true;
+    _remove_particles_with_zero_pt_and_mass=true;
     _remove_all_zero_pt_particles=false;
     _use_max_distance=false;
-    _remove_remaining_proxies=true;
+    _ghost_removal=true;
     _ghost_area=0.01;
     _grid_size_phi=-1;
     _grid_size_rap=-1;
@@ -51,15 +52,19 @@ namespace contrib{
     _ghosts_rapidity_sorted=false;
     _n_ghosts_phi=-1;
     _max_eta=-1;
-    _selector=0;
     _rescaling=0;
+    _use_nearby_hard_iterative=false;
+    _fix_pseudorapidity=false;
+    _scale_fourmomentum=false;
+    _hard_proxies=0;
+    _ghost_selector=0;
+    _particle_selector=0;
   }
 
 
   void IterativeConstituentSubtractor::initialize(){
-    if (_max_eta<=0) throw Error("IterativeConstituentSubtractor::initialize() The value for eta cut was not set or it is negative. It needs to be set before using the function initialize");
     if (_max_distances.size()==0) throw Error("IterativeConstituentSubtractor::initialize(): The vector for max_distances is empty. It should be specified before using the function initialize.");
-    this->construct_ghosts_uniformly(_max_eta);
+    this->_initialize_common();
   }
 
 
@@ -72,16 +77,30 @@ namespace contrib{
 
 
 
-  std::vector<fastjet::PseudoJet> IterativeConstituentSubtractor::subtract_event(std::vector<fastjet::PseudoJet> const &particles){
+  std::vector<fastjet::PseudoJet> IterativeConstituentSubtractor::subtract_event(std::vector<fastjet::PseudoJet> const &particles, std::vector<fastjet::PseudoJet> const *hard_proxies){
     bool original_value_of_ghosts_rapidity_sorted=_ghosts_rapidity_sorted;
+    if (_use_nearby_hard_iterative){
+      if (hard_proxies) _hard_proxies=hard_proxies;
+      else throw Error("IterativeConstituentSubtractor::subtract_event: It was requested to use closeby hard proxies but they were not provided in this function!");
+    }
+    else if (hard_proxies) throw Error("IterativeConstituentSubtractor::subtract_event: Hard proxies were provided but the set_use_hard_proxies function was not used before initialization. It needs to be called before initialization!");
+
     std::vector<fastjet::PseudoJet> backgroundProxies=this->get_background_proxies_from_ghosts(_ghosts,_ghosts_area);
-    std::vector<fastjet::PseudoJet> subtracted_particles;
+    std::vector<fastjet::PseudoJet> subtracted_particles,unselected_particles;
     for (unsigned int iparticle=0;iparticle<particles.size();++iparticle){
-      if (fabs(particles[iparticle].eta())<_max_eta) subtracted_particles.push_back(particles[iparticle]);
+      if (std::abs(particles[iparticle].eta())>_max_eta) continue;
+      if (particles[iparticle].pt()<ConstituentSubtractorConstants::zero_pt && _remove_all_zero_pt_particles) continue;
+      if (particles[iparticle].pt()<ConstituentSubtractorConstants::zero_pt && (_masses_to_zero || particles[iparticle].m()<ConstituentSubtractorConstants::zero_mass) && _remove_particles_with_zero_pt_and_mass) continue;
+      if (_particle_selector){
+        if (_particle_selector->pass(particles[iparticle])) subtracted_particles.push_back(particles[iparticle]);
+        else unselected_particles.push_back(particles[iparticle]);
+      }
+      else subtracted_particles.push_back(particles[iparticle]);
     }
     for (unsigned int iteration=0;iteration<_max_distances.size();++iteration){
       this->set_max_distance(_max_distances[iteration]);
       this->set_alpha(_alphas[iteration]);
+      if (_use_nearby_hard_iterative) this->set_use_nearby_hard(_nearby_hard_radii[iteration],_nearby_hard_factors[iteration]);
       std::vector<fastjet::PseudoJet> *remaining_backgroundProxies=0;
       if (iteration!=_max_distances.size()-1) remaining_backgroundProxies=new std::vector<fastjet::PseudoJet>; // do not need to estimate the remaining background for the last iteration
       subtracted_particles=this->do_subtraction(subtracted_particles,backgroundProxies,remaining_backgroundProxies);
@@ -95,7 +114,7 @@ namespace contrib{
       for (int i=backgroundProxies_original_size-1;i>=0;--i){
 	remaining_background_pt+=(remaining_backgroundProxies->at(i)).pt();
 	remaining_background_mt+=(remaining_backgroundProxies->at(i)).mt();
-	if (_remove_remaining_proxies && (remaining_backgroundProxies->at(i)).pt()>1e-10){
+	if (_ghost_removal && (remaining_backgroundProxies->at(i)).pt()>1e-10){
 	  backgroundProxies[i]=backgroundProxies[backgroundProxies.size()-1];
 	  backgroundProxies.pop_back();
 	}
@@ -105,7 +124,7 @@ namespace contrib{
 	}
       }
       delete remaining_backgroundProxies;
-      if (_remove_remaining_proxies) _ghosts_rapidity_sorted=false; // After erasing some elements from vector backgroundProxies, we cannot use the speed optimization in do_subtraction function, therefore setting _ghosts_rapidity_sorted to false.
+      if (_ghost_removal) _ghosts_rapidity_sorted=false; // After erasing some elements from vector backgroundProxies, we cannot use the speed optimization in do_subtraction function, therefore setting _ghosts_rapidity_sorted to false.
       for (unsigned int i=0;i<backgroundProxies.size();++i){
 	double pt= backgroundProxies[i].pt()*remaining_background_pt/background_pt;
 	double mtMinusPt=0;
@@ -116,40 +135,44 @@ namespace contrib{
       } 
     }    
     _ghosts_rapidity_sorted=original_value_of_ghosts_rapidity_sorted; // Setting _ghosts_rapidity_sorted to its original value
-
+    if (_particle_selector) subtracted_particles.insert(std::end(subtracted_particles), std::begin(unselected_particles), std::end(unselected_particles));
     return subtracted_particles;
   }
 
 
-
   std::string IterativeConstituentSubtractor::description() const{
     std::ostringstream descr;
-    if ( _externally_supplied_rho_rhom){
-      descr << "IterativeConstituentSubtractor using externally supplied rho = " << _rho << " and rho_m = " << _rhom << " to describe the background";
-    } else {
-      if (_bge_rhom && _bge_rho) {
-	descr << "IterativeConstituentSubtractor using [" << _bge_rho->description() << "] and [" << _bge_rhom->description() << "] to estimate the background";
-      } else {
-	if (_bge_rho) descr << "IterativeConstituentSubtractor using [" << _bge_rho->description() << "] to estimate the background";
-	else descr << "IterativeConstituentSubtractor: no externally supplied rho, nor background estimator";
-      }
-    }  
-    descr << std::endl << "IterativeConstituentSubtractor: perform mass subtraction: " << _do_mass_subtraction << std::endl;
+    descr << std::endl << "Description of fastjet::IterativeConstituentSubtractor:" << std::endl;
+    this->description_common(descr);
+    descr << "       IterativeConstituentSubtractor parameters: " << std::endl;
+    for (unsigned int iteration=0;iteration<_max_distances.size();++iteration){
+      descr << "            Iteration " << iteration+1 << ":  max_distance = " << _max_distances[iteration] << "  alpha = " << _alphas[iteration] << std::endl;
+    }
     return descr.str();
   }
 
 
+
   void IterativeConstituentSubtractor::set_parameters(std::vector<double> const &max_distances, std::vector<double> const &alphas){
-    if (max_distances.size()!= alphas.size()) throw Error("IterativeConstituentSubtractor::set_parameters(): the provided vectors have different size. They should have the same size.");
+    if (max_distances.size()!=alphas.size()) throw Error("IterativeConstituentSubtractor::set_parameters(): the provided vectors have different size. They should have the same size.");
     if (max_distances.size()==0 || alphas.size()==0) throw Error("IterativeConstituentSubtractor::set_parameters(): One of the provided vectors is empty. They should be not empty.");
     _max_distances=max_distances;
     _alphas=alphas;
   }
 
 
+  void IterativeConstituentSubtractor::set_nearby_hard_parameters(std::vector<double> const &nearby_hard_radii, std::vector<double> const &nearby_hard_factors){
+    if (nearby_hard_radii.size()!=nearby_hard_factors.size()) throw Error("IterativeConstituentSubtractor::set_use_nearby_hard(): the provided vectors have different size. They should have the same size.");
+    if (nearby_hard_radii.size()==0 || nearby_hard_factors.size()==0) throw Error("IterativeConstituentSubtractor::set_use_nearby_hard(): One of the provided vectors is empty. They should be not empty.");
+    _nearby_hard_radii=nearby_hard_radii;
+    _nearby_hard_factors=nearby_hard_factors;
+    _use_nearby_hard_iterative=true;
+  }
 
-  void IterativeConstituentSubtractor::set_remove_remaining_proxies(bool remove_remaining_proxies){
-    _remove_remaining_proxies=remove_remaining_proxies;
+
+
+  void IterativeConstituentSubtractor::set_ghost_removal(bool ghost_removal){
+    _ghost_removal=ghost_removal;
   }
 
 

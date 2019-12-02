@@ -142,6 +142,10 @@ int main(){
   // This should be set up before event loop:                                                                                                                        
   double max_eta=4;   // specify the maximal pseudorapidity for the input particles. It is used for the subtraction. Particles with eta>|max_eta| are removed and not used during the subtraction (they are not returned). The same parameter should be used for the GridMedianBackgroundEstimator as it is demonstrated in this example. If JetMedianBackgroundEstimator is used, then lower parameter should be used  (to avoid including particles outside this range).                                     
   double max_eta_jet=3; // the maximal pseudorapidity for selected jets. Not important for the subtraction.
+  // background estimation
+
+  GridMedianBackgroundEstimator bge_rho(max_eta,0.5);  // maximal pseudo-rapidity cut is used inside ConstituentSubtraction, but in GridMedianBackgroundEstimator, the range is specified by maximal rapidity cut. Therefore, it is important to apply the same pseudo-rapidity cut also for particles used for background estimation (using function "set_particles") and also derive the rho dependence on rapidity using this max pseudo-rapidity cut to get the correct rescaling function!
+
   contrib::IterativeConstituentSubtractor subtractor;
   subtractor.set_distance_type(contrib::ConstituentSubtractor::deltaR); // free parameter for the type of distance between particle i and ghost k. There are two options: "deltaR" or "angle" which are defined as deltaR=sqrt((y_i-y_k)^2+(phi_i-phi_k)^2) or Euclidean angle between the momenta
   vector<double> max_distances;
@@ -151,13 +155,15 @@ int main(){
   alphas.push_back(0);
   alphas.push_back(0);
   subtractor.set_parameters(max_distances,alphas); // in this example, 2 CS corrections will be performed: 1. correction with max_distance of 0.1 and alpha of 0, 2. correction with max_distance of 0.15 and alpha of 0. After the first correction, the scalar sum of pt from remaining ghosts is evaluated and redistributed uniformly accross the event.
-  subtractor.set_remove_remaining_proxies(true);  // set to true if the ghosts (proxies) which were not used in the previous CS procedure should be removed for the next CS procedure
+  subtractor.set_ghost_removal(true);  // set to true if the ghosts (proxies) which were not used in the previous CS procedure should be removed for the next CS procedure
   subtractor.set_ghost_area(0.004); // parameter for the density of ghosts. The smaller, the better - but also the computation is slower.
   subtractor.set_max_eta(max_eta); // parameter for maximal |eta| cut. It is pspecified above.
 
-  // example selector for ConstituentSubtractor:                                                                                                                     
-  Selector sel_CS_correction = SelectorPhiRange(0,3) * SelectorEtaMin(-1.5) * SelectorEtaMax(0);
-  // subtractor.set_selector(&sel_CS_correction);           // uncomment in case you want to use selector. Only ghosts fulfilling this selector will be constructed. No selection on input particles is done. The selection on input particles is the responsibility of the user. However, the maximal eta cut (specified with "set_max_eta" function) is done always for both, ghosts and input particles.
+  subtractor.set_background_estimator(&bge_rho);
+
+
+  // For examples how to treat massive particles or how to use Selector, see example_event_wide.cc and example_iterative.cc
+
 
   subtractor.initialize();  // this is new compared to previous usages of ConstituentSubtractor! It should be used after specifying all the parameters and before event loop.
 
@@ -188,15 +194,9 @@ int main(){
   vector<PseudoJet> full_jets = sel_jets(clust_seq_full.inclusive_jets());
 
 
-  // background estimation
-  GridMedianBackgroundEstimator bge_rho(max_eta,0.5);
   // setting the rescaling:
   bge_rho.set_rescaling_class(&rescaling);
   bge_rho.set_particles(full_event);
-  subtractor.set_background_estimator(&bge_rho);
-
-  // this sets the same background estimator to be used for deltaMass density, rho_m, as for pt density, rho:
-  subtractor.set_common_bge_for_rho_and_rhom(true); // for massless input particles it does not make any difference (rho_m is always zero)
 
   // print info (optional)
   cout << subtractor.description() << endl;

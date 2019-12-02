@@ -1,4 +1,4 @@
-AC_INIT([FastJet],[3.3.2])
+AC_INIT([FastJet],[3.3.3])
 AC_CONFIG_SRCDIR([src/JetDefinition.cc])
 AM_INIT_AUTOMAKE(tar-ustar)
 
@@ -263,7 +263,7 @@ fi
 dnl update compilation/link flags for the CGAL lib
 if [[ "x$ENABLE_CGAL_FLAG" == "xyes" ]] ; then
    AM_CXXFLAGS=${AM_CXXFLAGS}" $CGAL_CPPFLAGS "
-   CONFIG_LIBS=${CONFIG_LIBS}" $CGAL_LIBS "
+   CONFIG_LIBS=" $CGAL_LIBS "${CONFIG_LIBS}
 else
    AM_CXXFLAGS=${AM_CXXFLAGS}" -DDROP_CGAL "
 dnl   CONFIG_CXXFLAGS=${CONFIG_CXXFLAGS}" -DDROP_CGAL "

@@ -1,3 +1,139 @@
+2019-07-15  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.4.4
+
+	* ConstituentSubtractor.hh
+	* IterativeConstituentSubtractor.hh
+	- Removed C++11 extensions
+
+
+
+	
+
+2019-07-09  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.4.3
+
+	* ConstituentSubtractor.cc
+	* ConstituentSubtractor.hh
+	* IterativeConstituentSubtractor.cc
+	* IterativeConstituentSubtractor.hh
+	- Removed C++11 extensions
+	- Changed the way how the user should specify that he/she wants to do delta_m correction. Now, additionally the "set_do_mass_correction" function must be called
+	- Updated information about the treatment of massive inputs.
+
+	
+	* example_event_wide.cc
+	* example_iterative.cc
+	- Updated information about the treatment of massive inputs. No changes in the code
+
+
+	* example_jet_by_jet.cc
+	- small updates to the commented lines
+
+
+	
+2019-07-04  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.4.2
+
+	* example_event_wide.cc
+	* example_iterative.cc
+	* ConstituentSubtractor.hh
+	-  Updated information about the treatment of massive inputs. No changes in the code
+
+
+
+2019-06-21  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.4.1
+
+	* ConstituentSubtractor.cc
+	* ConstituentSubtractor.hh
+	-  Updated the treatment of additional background estimator for rho_m. Currently in ConstituentSubtractor, only such rho_m background estimators are supported which have member function rho_m(), i.e. the result from member function has_rho_m() is true (which is available since fastjet version 30100).
+
+
+	
+
+2019-06-19  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.4.0
+
+	* ConstituentSubtractor.cc
+	* ConstituentSubtractor.hh
+	- Added more possibilities for treatment of massive particles and information about them	
+	- Using value _zero_pt=1e-40 for particles with corrected pt of 0 and value _zero_mass=1e-50 for particles with corrected mass of 0.
+	- Added possibility to use particle selector - all particles which pass the particle selector are corrected, while the particles which do not pass, are returned unmodified
+	- Updated description
+
+	* IterativeConstituentSubtractor.cc
+	- Updated description
+	- Added possibility to use particle selector
+	
+	* example_event_wide.ref
+	* example_event_wide.cc
+	- Renamed from example_whole_event.cc(ref)
+	- Now setting the masses to zero
+	- Added example to use particle selector
+	- Added detailed explanation what options are available for massive particles
+	
+	* example_iterative.ref
+	* example_iterative.cc
+	- Added detailed explanation what options are available for massive particles
+	- Now setting the masses to zero in the ICS correction
+	- Added example how to use particle selector
+
+	* example_jet_by_jet.ref
+	* example_jet_by_jet.cc
+	- Renamed from example.cc(ref)
+	- Now setting the masses to zero
+
+
+2019-03-28  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.3.2
+
+	* ConstituentSubtractor.cc
+	* ConstituentSubtractor.hh
+	- Added functions for possible usage of information about hard proxies
+	- Added function to set if the user wants to keep the original masses (i.e. no mass subtraction and no setting to zero). By default, the masses are set to zero.
+	- Added instructions, how can the masses be treated, at the beggining of ConstituentSubtractor.hh
+	- Added new function set_common_bge_for_rho_and_rhom() which should be used when the user wants to do mass subtraction with the same background estimator as for pt subtraction. This replaces the set_common_bge_for_rho_and_rhom(bool value=true) function which should be not used anymore. Currently both function give the same results. The function set_common_bge_for_rho_and_rhom(bool value=true) will be removed in the future.
+	- Updated ConstituentSubtractor::description
+	- Speed optimization
+	
+
+	
+	* IterativeConstituentSubtractor.cc
+	* IterativeConstituentSubtractor.hh
+	- Added functions for possible usage of information about hard proxies
+
+	
+	* example_whole_event_iterative.cc
+	* example_whole_event.cc
+	- Added information how can the masses be treated and examples
+	- Added examples how to use the information about hard proxies
+
+
+	* example.cc
+	* example_background_rescaling.cc
+	* example_whole_event_using_charged_info.cc
+	- Usage of new function set_common_bge_for_rho_and_rhom()
+
+	
+	* example_whole_event.ref
+	* example.ref
+	* example_whole_event_using_charged_info.ref
+	- Updated references because the ConstituentSubtractor::description was updated
+
+	
+
 2018-06-28  Peter Berta  <peter.berta@cern.ch>
 
 	* VERSION:

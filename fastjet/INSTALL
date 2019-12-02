@@ -13,10 +13,10 @@ The full list of configuration options can be obtained with ./configure --help.
 Some useful ones include:
 
    --prefix=<where-you-wish-to-install>   (default=/usr/local)
-		    specify location where FastJet will be installed
-		    The library and plugins will be installed in
-		    ${prefix}/lib while the headers will be placed in
-		    ${prefix}/include/fastjet
+                    specify location where FastJet will be installed
+                    The library and plugins will be installed in
+                    ${prefix}/lib while the headers will be placed in
+                    ${prefix}/include/fastjet
 
    --disable-static
    --enable-static  disable/enable construction of static libraries
@@ -25,6 +25,8 @@ Some useful ones include:
    --disable-shared
    --enable-shared  disable/enable construction of shared libraries
                     (enabled by default)
+
+   --enable-pyext   enable the python interface (default=no)
 
    --enable-cgal    enable use of CGAL libraries, which are needed 
                     for the N ln N version of the k_t algorithm and
@@ -44,29 +46,40 @@ Some useful ones include:
                     Makefile. If this is absent too, the default
                     location (/usr/share/cgal/cgal.mk) is used.
 
-    --enable-allcxxplugins    (default=no)
+   --with-cgal-boostdir=dir
+   --with-cgal-gmpdir=dir
+   --with-cgal-mpfrdir=dir
+                    specifies user-defined locations for CGAL
+                    dependencies (Boost, GMP and MPFR)
+
+   --enable-cgal-header-only
+                    specified that one is working with a header-only
+                    version of CGAL (this will hopefully be
+                    auto-detected in a future version of FastJet)
+   
+   --enable-allcxxplugins    (default=no)
                     enable all C++ plugins, but not the Fortran ones
 
-    --enable-allplugins       (default=no)
+   --enable-allplugins       (default=no)
                     enable all plugins, including the Fortran ones
                     (PxCone). 
 
-    --enable-siscone          (default=yes)
+   --enable-siscone          (default=yes)
                     enables the SISCone plugin
 
-    --enable-cdfcones         (default=yes)
-		    enables the CDFJetClu and CDFMidPoint plugins
+   --enable-cdfcones         (default=yes)
+                    enables the CDFJetClu and CDFMidPoint plugins
 
-    --enable-d0runiicone      (default=no)
+   --enable-d0runiicone      (default=no)
                     enables the D0RunIICone (also known as
                     ILConeAlgorithm within D0)
 
-    --enable-pxcone           (default=no)
-		    enables the PxCone plugin (note this is in f77,
+   --enable-pxcone           (default=no)
+                    enables the PxCone plugin (note this is in f77,
                     and so you may have to deal with C++/f77
                     compatibility issues)
 
-    etc.            many more plugins available: --help option lists
+   etc.             many more plugins available: --help option lists
                     them
 
 
@@ -226,22 +239,22 @@ jet #        rapidity             phi              pt  n constituents
 Additionally the example/ directory contains the following other
 programs
 
-- ktjet_example		
-	same example program, but written with ktjet, to illustrate
-	similarities and differences with fastjet_example. For
-	compilation to work please set the KTJET_INCLUDE and
-	KTJET_LIBRARY variables in the fastjet main Makefile.
+- ktjet_example
+        same example program, but written with ktjet, to illustrate
+        similarities and differences with fastjet_example. For
+        compilation to work please set the KTJET_INCLUDE and
+        KTJET_LIBRARY variables in the fastjet main Makefile.
 
 - ktjet_timing
 - fastjet_timing_plugins
-	programs for testing output and timings of the two programs --
-	may be run with a variety of command-line options to control
-	behaviour -- see the beginning of fastjet_timing_plugins.cc for
-	further information.
+        programs for testing output and timings of the two programs --
+        may be run with a variety of command-line options to control
+        behaviour -- see the beginning of fastjet_timing_plugins.cc for
+        further information.
 
 - fastjet_areas
-	example program for evaluating the areas of the jets in 
-	a single event (it reads in the same input file as fastjet_example)
+        example program for evaluating the areas of the jets in 
+        a single event (it reads in the same input file as fastjet_example)
 
 - A number of examples named 01-XXX.cc, 02-YYY.cc, etc, where FastJet features
   are illustrated in increasing order of complexity.

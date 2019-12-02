@@ -4,9 +4,9 @@
 // #define INSTRUMENT2 1
 
 //FJSTARTHEADER
-// $Id: LazyTiling25.hh 4354 2018-04-22 07:12:37Z salam $
+// $Id: LazyTiling25.hh 4420 2019-11-29 09:28:20Z soyez $
 //
-// Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2019, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

@@ -1,3 +1,104 @@
+2019-11-29  Gregory Soyez  <soyez@fastjet.fr>
+
+	* Release of FastJet fastjet-3.3.3
+
+2019-11-29  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	changed version to 3.3.3
+
+	* regression-tests/test-contrib.pl:
+	updated svn repository to match new HEPForge setup
+
+	* almost all cc and hh files:
+	updated the header to include the correct years in the copyright
+
+	* doc/fastjet-doc.tex:
+	added a few clarifications suggested by Matteo
+
+	* doc/fastjet-doc.tex:
+	* INSTALL:
+	documented the new configure arguments for CGAL
+
+2019-11-27  Gregory Soyez  <soyez@fastjet.fr>
+
+	* m4/CGAL.m4 (ACX_CHECK_CGAL):
+	when adding compiler/linker flags, also use them in checks for
+	headres and libs
+
+2019-11-22  Gregory Soyez  <soyez@fastjet.fr>
+
+	* m4/CGAL.m4:
+	removed the test for Boost header (version.hpp) as it soed not
+	seem to be required by all installations of CGAL... we therefore
+	prefer to leave the responsabiility to the end-users who need it
+	and not bother the ones who don't.
+
+	* m4/CGAL.m4:
+	added explicit checks of the headers firectory and files
+	+ done a bit of cleaning
+
+	* m4/CGAL.m4:
+	after further tests, it seems that only GMP is needed for FJ so
+	this is whay we're now asking for (awaiting confirmation from
+	cgal-discuss).
+	If GMP is not found (and CGAL is requested), configure will fail.
+
+2019-11-21  Gregory Soyez  <soyez@fastjet.fr>
+
+	* m4/CGAL.m4:
+	uniformised the CGAL dependency checks: we now check for Boost,
+	GMP and MPFR which are the 3 dependences listed by CGAL (since
+	at least v4.1)
+
+2019-11-15  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* m4/CGAL.m4:
+	adjusted ordering of checks and libs so that gmp is tested before CGAL
+
+2019-11-08  Gregory Soyez  <soyez@fastjet.fr>
+
+	* m4/CGAL.m4:
+	added a --with-cgal-gmpdir=... allowing one to use a non-standard
+	directory for the GMP library (used to build CGAL).
+	Note that this is only relevant when FastJet is built with
+	--enable-cgal
+
+	* fastjet-config.in:
+	reordered link flags to properly satisfy dependencies (put fastjet
+	before CGAL/gmp)
+
+2019-05-10  Gavin Salam  <salam@hydra>
+
+	* autogen.sh (LIBTOOLIZE):
+	replaced libtool existence check with libtoolize existence check
+	(some systems don't have the former, but do have the latter, and
+	the latter seems to be enough).
+
+2019-02-14  Gavin Salam  <gavin.salam@cern.ch>
+
+	* plugins/Jade/JadePlugin.cc (JadeBriefJet):
+	introduced fix proposed by andrii.verbytskyi@mpp.mpg.de to work
+	around overflow error when rt2E < 1.
+
+2018-10-01  Gregory Soyez  <soyez@fastjet.fr>
+
+	* doc/fastjet-doc.tex:
+	updated my affiliation to include CNRS and Univ. Paris-Saclay
+
+	* src/ClusterSequence.cc (print_banner):
+	updated banner so it mentions GPL v2 or higher
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	  changed version to 3.3.3-devel
+
 2018-10-01  Gregory Soyez  <soyez@fastjet.fr>
 
 	* Release of FastJet fastjet-3.3.2
