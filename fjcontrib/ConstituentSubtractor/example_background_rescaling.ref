@@ -13,8 +13,15 @@
 # It uses T. Chan's closest pair algorithm, S. Fortune's Voronoi code
 # and 3rd party plugin jet algorithms. See COPYING file for details.
 #--------------------------------------------------------------------------
-IterativeConstituentSubtractor using [GridMedianBackgroundEstimator, with rectangular grid with rapidity extent -4 < rap < 4, tile size drap x dphi = 0.5 x 0.483322] to estimate the background
-IterativeConstituentSubtractor: perform mass subtraction: 1
+
+Description of fastjet::IterativeConstituentSubtractor:
+       Using rho estimation: GridMedianBackgroundEstimator, with rectangular grid with rapidity extent -4 < rap < 4, tile size drap x dphi = 0.5 x 0.483322
+       The masses of all particles will be set to zero.
+       The rapidity of the particles will be kept unchanged (not pseudo-rapidity).
+       The information about nearby hard proxies will not be used.
+       IterativeConstituentSubtractor parameters: 
+            Iteration 1:  max_distance = 0.1  alpha = 0
+            Iteration 2:  max_distance = 0.2  alpha = 0
 
 # original hard jets
 pt = 89.57, rap = 2.088, mass = 21.55, width = 0.1866
@@ -27,7 +34,7 @@ pt = 167.3, rap = 0.6891, mass = 58.31, width = 0.1268
 pt = 230.5, rap = -1.065, mass = 46.2, width = 0.05647
 
 # subtracted full jets
-pt = 89.67, rap = 2.091, mass = 23.98, width = 0.1944
-pt = 144.1, rap = 0.6791, mass = 37.54, width = 0.07246
-pt = 214.3, rap = -1.071, mass = 26.15, width = 0.02694
+pt = 89.67, rap = 2.092, mass = 21.43, width = 0.1938
+pt = 144.1, rap = 0.6761, mass = 17.06, width = 0.07219
+pt = 214.3, rap = -1.072, mass = 11, width = 0.02657
 

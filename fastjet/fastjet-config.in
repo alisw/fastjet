@@ -359,9 +359,9 @@ case $found_query in
 #       otherwise), we only need to worry if shared available and static
 #       explicitely asked
 	if test "x$use_shared" = "xno" && test "x@HAS_SHARED@" = "xyes" ; then
-	    libs_string=$libs_string" ${libdir}/libfastjettools.a ${libdir}/libfastjet.a"
+	    libs_string="${libdir}/libfastjettools.a ${libdir}/libfastjet.a "$libs_string
 	else
-	    libs_string=$libs_string" -L${libdir} -lfastjettools -lfastjet"
+	    libs_string="-L${libdir} -lfastjettools -lfastjet "$libs_string
 	fi
 	if test "x$add_rpath" = "xyes" ; then
 	    libs_string="-Wl,-rpath,${libdir} "$libs_string

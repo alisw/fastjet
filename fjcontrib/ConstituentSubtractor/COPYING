@@ -11,7 +11,11 @@ this code as part of work towards a scientific publication, whether
 directly or contained within another program you should include a
 citation to
 
-  arXiv:1403.3108
+  JHEP 1406 (2014) 092, arXiv:1403.3108
+
+and in case you use Iterative Constituent Subtraction (class IterativeConstituentSubtractor), additionally citation to 
+
+  arXiv:1905.03470
 
 
 ======================================================================

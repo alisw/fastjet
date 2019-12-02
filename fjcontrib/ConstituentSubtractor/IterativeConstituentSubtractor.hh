@@ -33,10 +33,13 @@ namespace contrib{
 
 //------------------------------------------------------------------------
 /// \class IterativeConstituentSubtractor
-/// A class to perform subtraction of background, e.g. pileup, from a set of input particles from whole event. The output is a vector of corrected PseudoJets.
+/// A class to perform subtraction of background, e.g. pileup, from a set of input particles from whole event. The output is a vector of corrected PseudoJets. More info on the algorithm can be found in
+/// https://arxiv.org/abs/1905.03470
 ///
-/// See example_whole_event_iterative.cc.
+/// For usage, see
+/// example_iterative.cc
 ///
+
   class IterativeConstituentSubtractor : public fastjet::contrib::ConstituentSubtractor{
   public:
 
@@ -61,25 +64,30 @@ namespace contrib{
     
     ///
     /// do iterative subtraction. The particles with |eta|>max_eta are discarded at the beginning, i.e. they are not used, nor returned. The ghosts are added automatically inside this function up to max_eta.
-    virtual std::vector<fastjet::PseudoJet> subtract_event(std::vector<fastjet::PseudoJet> const &particles);
+    virtual std::vector<fastjet::PseudoJet> subtract_event(std::vector<fastjet::PseudoJet> const &particles, std::vector<fastjet::PseudoJet> const *hard_proxies=0);
 
     ///
     /// this should be not used
     virtual std::vector<fastjet::PseudoJet> subtract_event(std::vector<fastjet::PseudoJet> const &particles, double max_eta);
     
     ///
-    /// function to set the _remove_remaining_proxies member. If set to true, then the proxies with non-zero remaining pt are discarded in the iterative CS
-    void set_remove_remaining_proxies(bool remove_remaining_proxies);
+    /// function to set the _ghost_removal member. If set to true, then the proxies with non-zero remaining pt are discarded for the next iteration
+    void set_ghost_removal(bool ghost_removal);
 
     ///
     /// Set maximal distance and alpha parameters for the iterative CS
     void set_parameters(std::vector<double> const &max_distances, std::vector<double> const &alphas);
 
+    void set_nearby_hard_parameters(std::vector<double> const &nearby_hard_radii, std::vector<double> const &nearby_hard_factors);
+
 
   protected:
     std::vector<double> _max_distances;
     std::vector<double> _alphas;
-    bool _remove_remaining_proxies;
+    std::vector<double> _nearby_hard_radii;
+    std::vector<double> _nearby_hard_factors;
+    bool _use_nearby_hard_iterative;
+    bool _ghost_removal;
   };
   
 

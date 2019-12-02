@@ -77,22 +77,29 @@
 
 \title{\sf FastJet user manual%
   \\ \large (for version
-  3.3.2%  %%%-VERSION-NUMBER (do not remove this comment; used
+  3.3.3%  %%%-VERSION-NUMBER (do not remove this comment; used
              %  for automatic version-number changes; version number must
              %  stay one a single line)
   )
 }
-\author{Matteo Cacciari,$^{1,2}$ Gavin P. Salam$^{3,4,1}$ and Gregory Soyez$^{5}$\\[10pt]
+\author{Matteo Cacciari,$^{1,2}$ Gavin P. Salam$^{3,4,}$\footnote{On
+    leave from CERN, Theoretical Physics Department, Geneva,
+    Switzerland and from CNRS, UMR 7589, LPTHE, F-75005, Paris, France.}\; and Gregory Soyez$^{5}$\\[10pt]
   \normalsize
   $^1$LPTHE, UPMC Univ.~Paris 6 and CNRS UMR 7589, Paris, France\\
   \normalsize
   $^2$Universit\'e Paris Diderot, Paris, France\\
   \normalsize
-  $^3$CERN, Physics Department, Theory Unit, Geneva, Switzerland\\
+  $^3$ Rudolf Peierls Centre for Theoretical Physics,\\[-5pt]
   \normalsize
-  $^4$Department of Physics, Princeton University, Princeton, NJ 08544, USA\\
+  Clarendon Laboratory, University of Oxford, United Kingdom\\
   \normalsize
-  $^5$Institut de Physique Th\'eorique, CEA Saclay, France
+  $^4$ All Souls College, Oxford, United Kingdom\\
+  \normalsize
+  $^5$Institut de Physique Th\'eorique, CNRS, CEA Saclay, Universit\'e
+  Paris-Saclay, France
+%  $^3$CERN, Physics Department, Theory Unit, Geneva, Switzerland\\
+%  \normalsize
 }
 
 \date{}
@@ -4323,20 +4330,25 @@ Compilation and installation make use of the standard
   % make check
   % make install
 \end{verbatim}
-procedure. Explanations of available options are given in the
-\ttt{INSTALL} file in the top directory, and a list can also be obtained running
-\ttt{./configure --help}.
+procedure. Explanations of available options (e.g.\ to select which
+plugins are built or enable/disable python support) are given in the
+\ttt{INSTALL} file in the top directory, and a list can also be
+obtained running \ttt{./configure --help}.
 
 In order to access the \ttt{NlnN} strategy for the $k_t$ algorithm,
 the \fastjet library needs to be compiled with support for the
-Computational Geometry Algorithms Library \ttt{CGAL} \cite{CGAL}. This
+Computational Geometry Algorithms Library \ttt{CGAL}~\cite{CGAL}. This
 same strategy gives $N\ln N$ performance for Cambridge/Aachen and
 $N^{3/2}$ performance for anti-$k_t$ (whose sequence for jet
 clustering triggers a worst-case scenario for the underlying
 computational geometry methods.)
 %
 CGAL can be enabled with the \verb|--enable-cgal| at the
-\ttt{configure} stage.
+\ttt{configure} stage.\footnote{Since version 4.9, \ttt{CGAL} can
+  be used as a header-only library (this is the default from version
+  5.0 of \ttt{CGAL}). In this case, \fastjet requires an installed
+  version of CGAL as well as the \ttt{--enable-cgal-header-only}
+  configure argument, see e.g.\ \href{https://doc.cgal.org/latest/Manual/usage.html\#section_headeronly}{section 4} of the \ttt{CGAL} manual.}
 %
 \ttt{CGAL} may be obtained in source form from
 \url{http://www.cgal.org/} and is also available in binary form for

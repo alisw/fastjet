@@ -1,4 +1,4 @@
-// $Id: functions.hh 1116 2018-05-03 14:39:27Z berta $
+// $Id: functions.hh 1235 2019-07-15 12:49:48Z peter.berta $
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet contrib.
@@ -47,6 +47,7 @@ public:
     for (unsigned int iconst=0; iconst<constituents.size(); iconst++){
       fastjet::PseudoJet cons=constituents.at(iconst);
       double dR = sqrt(cons.squared_distance(jet));
+      //cout << iconst << "  " << cons.squared_distance(jet) << "  " << cons.pt() << "  " << cons.m() << endl;
       double pt = cons.pt();
       width += dR * pt;
       ptSum += pt;

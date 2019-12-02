@@ -1,10 +1,16 @@
-ConstituentSubtractor: no externally supplied rho, nor background estimator
-perform mass subtraction: 1
+
+Description of fastjet::ConstituentSubtractor which can be used for event-wide or jet-by-jet correction:
+       No externally supplied rho, nor background estimator
+       The mass part (delta_m) will be also corrected.
+       using different background estimator for rho_m as for rho
+       The rapidity of the particles will be kept unchanged (not pseudo-rapidity).
+       The information about nearby hard proxies will not be used.
+       Using parameters: max_distance = 0.3   alpha = 1
 
 # 20 pileup events on top of the hard event
 # read an event with 203 signal particles, 1714 background particles, 93 signal charged particles, and 813 background charged particles with pseudo-rapidity |eta|<4
 #--------------------------------------------------------------------------
-#                         FastJet release 3.2.0
+#                         FastJet release 3.3.1
 #                 M. Cacciari, G.P. Salam and G. Soyez                  
 #     A software package for jet finding and analysis at colliders      
 #                           http://fastjet.fr                           

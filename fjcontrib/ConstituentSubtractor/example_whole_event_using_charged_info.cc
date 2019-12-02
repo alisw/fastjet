@@ -1,4 +1,4 @@
-// $Id: example_whole_event_using_charged_info.cc 1118 2018-05-04 14:17:50Z berta $
+// $Id: example_whole_event_using_charged_info.cc 1235 2019-07-15 12:49:48Z peter.berta $
 //
 //----------------------------------------------------------------------
 // Example on how to do pileup correction on the whole event
@@ -44,10 +44,10 @@ int main(){
   subtractor.set_max_distance(0.3); // free parameter for the maximal allowed distance between particle i and ghost k
   subtractor.set_alpha(1);  // free parameter for the distance measure (the exponent of particle pt). The larger the parameter alpha, the more are favoured the lower pt particles in the subtraction process
   subtractor.set_ghost_area(0.01); // free parameter for the density of ghosts. The smaller, the better - but also the computation is slower.
-  subtractor.set_do_mass_subtraction(true);   // specify if also the mass term sqrt(pT^2+m^2)-pT should be corrected or not. It is necessary to specify it like this because the function set_common_bge_for_rho_and_rhom cannot be used in this case.
+  subtractor.set_do_mass_subtraction();   // use this line if also the mass term sqrt(pT^2+m^2)-pT should be corrected or not. It is necessary to specify it like this because the function set_common_bge_for_rho_and_rhom cannot be used in this case.
   double CBS=1.0;  // choose the scale for scaling the background charged particles
   double CSS=1.0;  // choose the scale for scaling the signal charged particles
-  subtractor.set_remove_zero_pt_and_mtMinusPt_particles(false); // set to false if you want to have also the zero pt and mtMinuspt particles in the output. Set to true, if not. The choice has no effect on the performance. By deafult, these particles are removed - this is the recommended way since then the output contains much less particles, and therefore the next step (e.g. clustering) is faster. In this example, it is set to false to make sure that this test is successful on all systems (mac, linux).
+  subtractor.set_remove_particles_with_zero_pt_and_mass(false); // set to false if you want to have also the zero pt and mtMinuspt particles in the output. Set to true, if not. The choice has no effect on the performance. By deafult, these particles are removed - this is the recommended way since then the output contains much less particles, and therefore the next step (e.g. clustering) is faster. In this example, it is set to false to make sure that this test is successful on all systems (mac, linux).
   subtractor.set_grid_size_background_estimator(0.6); // set the grid size (not area) for the background estimation with GridMedianBackgroundEstimation which is used within CS correction using charged info 
   cout << subtractor.description() << endl;
 

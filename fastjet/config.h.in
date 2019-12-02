@@ -55,6 +55,9 @@
 /* compiler supports the "explicit" keyword for operators */
 #undef HAVE_EXPLICIT_FOR_OPERATORS
 
+/* Define to 1 if you have the <gmp.h> header file. */
+#undef HAVE_GMP_H
+
 /* compiler supports GNU c++ deprecated attribute */
 #undef HAVE_GNUCXX_DEPRECATED
 
@@ -66,6 +69,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <mpfr.h> header file. */
+#undef HAVE_MPFR_H
 
 /* compiler supports the "override" keyword */
 #undef HAVE_OVERRIDE

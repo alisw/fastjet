@@ -1,3 +1,38 @@
+2019/07/15: release of version 1.4.4:
+        - Removed two more C++11 extensions
+
+
+2019/07/09: release of version 1.4.3:
+        - Removed C++11	extensions
+        - Changed the way how the user should specify that he/she wants to do delta_m correction. Now, additionally the	"set_do_mass_correction" function must be cal
+led
+        - Updated information about the options for the treatment of massive inputs.
+
+
+
+2019/07/04: release of version 1.4.2:
+        -  Updated information about the treatment of massive inputs. No changes in the	code.
+
+
+2019/06/21: release of version 1.4.1:
+	    - Updated the treatment of additional background estimator for rho_m. Currently in ConstituentSubtractor, only such rho_m background estimators are supported which have member function rho_m(), i.e. the result from member function has_rho_m() is true (which is available since fastjet version 30100).
+
+
+2019/06/19: release of version 1.4.0:
+	    - Updated naming of functions and examples to be consistent with arXiv:1905.03470 
+	    - Updated treatment of massive inputs - added new options and clarification in the examples
+	    - Updated values of pt and mass for particles with zero pt and mass
+	    - Added possibility to use selector for particles - only particles passing the selector are corrected, the other particles are unchanged 
+	    - Updated COPYING
+
+
+2019/03/28: release of version 1.3.2:
+	    - Started to use C++11 features
+	    - Added possibility to keep the masses unchanged. The possible options how to treat masses are explained at the beggining of ConstituentSubtractor.hh
+	    - Added possibility to use information about hard particles (e.g. charged tracks from primary vertex) in the definition of the CS distance used for the correction procedure.
+	    - Updated examples
+
+
 2018/06/28: release of version 1.3.1:
 	    - Updated examples
 
