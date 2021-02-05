@@ -1,7 +1,7 @@
 //FJSTARTHEADER
-// $Id: ClusterSequence.cc 4420 2019-11-29 09:28:20Z soyez $
+// $Id: ClusterSequence.cc 4442 2020-05-05 07:50:11Z soyez $
 //
-// Copyright (c) 2005-2019, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2020, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -253,12 +253,12 @@ void ClusterSequence::_initialise_and_run_no_decant () {
       // squared angular measure, make sure that the _R2 is defined
       // in a similar way.
       if (_Rparam > pi) {
-	// choose a value that ensures that back-to-back particles will
-	// always recombine 
-	//_R2 = 4.0000000000001;
-	_R2 = 2 * ( 3.0 + cos(_Rparam) );
+        // choose a value that ensures that back-to-back particles will
+        // always recombine 
+        //_R2 = 4.0000000000001;
+        _R2 = 2 * ( 3.0 + cos(_Rparam) );
       } else {
-	_R2    = 2 * ( 1.0 - cos(_Rparam) );
+        _R2    = 2 * ( 1.0 - cos(_Rparam) );
       }
       _invR2 = 1.0/_R2;
     }

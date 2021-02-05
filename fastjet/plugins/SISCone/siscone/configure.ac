@@ -1,4 +1,4 @@
-AC_INIT([SISCone], [3.0.4])
+AC_INIT([SISCone], [3.0.5])
 AC_CONFIG_SRCDIR([siscone/siscone.cpp])
 AM_INIT_AUTOMAKE
 
