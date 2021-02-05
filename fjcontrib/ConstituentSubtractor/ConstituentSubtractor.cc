@@ -1,4 +1,4 @@
-// $Id: ConstituentSubtractor.cc 1235 2019-07-15 12:49:48Z peter.berta $
+// $Id: ConstituentSubtractor.cc 1240 2020-02-23 13:51:05Z peter.berta $
 //
 // ConstituentSubtractor package
 // Questions/comments: berta@ipnp.troja.mff.cuni.cz, Martin.Spousta@cern.ch, David.W.Miller@uchicago.edu, Rupert.Leitner@mff.cuni.cz
@@ -178,7 +178,7 @@ LimitedWarning ConstituentSubtractor::_warning_unused_rhom;
 
     std::vector<fastjet::PseudoJet> backgroundProxies=this->get_background_proxies_from_ghosts(ghosts,ghosts_area);
     std::vector<fastjet::PseudoJet> subtracted_particles=this->do_subtraction(particles,backgroundProxies);
-    if (_particle_selector) subtracted_particles.insert(std::end(subtracted_particles), std::begin(unselected_particles), std::end(unselected_particles));
+    if (_particle_selector) subtracted_particles.insert(subtracted_particles.end(), unselected_particles.begin(), unselected_particles.end());
     fastjet::PseudoJet subtracted_jet=join(subtracted_particles);
     subtracted_jet.set_user_index(jet.user_index());
 
@@ -217,7 +217,7 @@ LimitedWarning ConstituentSubtractor::_warning_unused_rhom;
     }
     else if (hard_proxies) throw Error("ConstituentSubtractor::subtract_event: Hard proxies were provided but the set_use_hard_proxies function was not used before initialization. It needs to be called before initialization!");
     std::vector<fastjet::PseudoJet> subtracted_particles=this->do_subtraction(selected_particles,backgroundProxies);
-    if (_particle_selector) subtracted_particles.insert(std::end(subtracted_particles), std::begin(unselected_particles), std::end(unselected_particles));
+    if (_particle_selector) subtracted_particles.insert(subtracted_particles.end(), unselected_particles.begin(), unselected_particles.end());
     return subtracted_particles;
   }
 

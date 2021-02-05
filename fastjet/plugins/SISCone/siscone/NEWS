@@ -3,11 +3,17 @@ we give a short summary of the important changes from the previous
 version. If you want to see a more detailed list of changes, please
 read the ChangeLog file.
 
+SISCone version 3.0.5 (April 24 2020)
+=====================
+
+* Minor release, fixed signed/unsigned warning in bitshift operations
+  (version to be included in FastJet>=3.3.4)
+
 SISCone version 3.0.4 (October 1 2018)
 =====================
 
 * Minor release, improved shared library handling by fixing
-  inter-dependences. (version to be included in FastJet>=3.3.2)
+  inter-dependencies. (version to be included in FastJet>=3.3.2)
 
 SISCone version 3.0.3 (August 3 2016)
 =====================

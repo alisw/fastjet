@@ -1,3 +1,13 @@
+2020-02-23  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.4.5
+
+	* ConstituentSubtractor.cc
+	* IterativeConstituentSubtractor.cc
+	- Further removal of C++11 extensions which were missed previously (std::end and std::begin)
+
+
 2019-07-15  Peter Berta  <peter.berta@cern.ch>
 
 	* VERSION:

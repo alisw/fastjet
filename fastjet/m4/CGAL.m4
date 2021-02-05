@@ -40,7 +40,7 @@ AC_ARG_WITH(cgal_mpfrdir,
 
 dnl allows one to say that the CGAL build is header-only
 AC_ARG_ENABLE(cgal-header-only,
-              [  --enable-cgal-header-only   signals a header-only install of CGAL [default=no]],
+              [  --enable-cgal-header-only   enable build with header-only install of CGAL, e.g. as for CGALv5; in that case do not use --enable-cgal [default=no]],
               [ENABLE_CGAL_HEADER_ONLY_FLAG="$enableval"],
               [ENABLE_CGAL_HEADER_ONLY_FLAG="no"])
 

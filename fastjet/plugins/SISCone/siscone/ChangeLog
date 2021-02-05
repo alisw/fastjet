@@ -1,3 +1,41 @@
+2020-04-24  Gregory Soyez  <soyez@fastjet.fr>
+
+	Release of SISCone 3.0.5
+
+2020-04-24  Gregory Soyez  <soyez@fastjet.fr>
+	* AUTHORS:
+	* CHECKLIST:
+	* ChangeLog:
+	* Doxyfile:
+	* NEWS:
+	* configure.ac:
+	updated version number to 3.0.5 + started the release process
+
+	* doc/html/usage.html:
+	* doc/html/download.html:
+	* doc/html/index.html:
+	* doc/html/perfs.html:
+	* doc/html/algorithm.html:
+	* doc/html/sm_issue.html:
+	updated Gavin's email address + set version number to 3.0.5
+
+	* AUTHORS:
+	Updated Gavin's affiliation
+
+2020-04-22  Gregory Soyez  <soyez@fastjet.fr>
+
+	* siscone/spherical/geom_2d.h:
+	* siscone/geom_2d.h:
+	replaced 1 by 1u in bitshift operation to avoid a potential
+	sign/unsigned issue (reported by Andrii Verbyitskyi)
+
+2018-10-01  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* Doxyfile:
+	* doc/html/*.html:
+	changed version to 3.0.5-devel
+
 2018-10-01  Gregory Soyez  <soyez@fastjet.fr>
 
 	Release of SISCone 3.0.4

@@ -1,3 +1,70 @@
+2020-05-05  Gregory Soyez  <soyez@fastjet.fr>
+
+	* Release of FastJet fastjet-3.3.4
+
+2020-05-05  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	changed version to 3.3.4
+
+	* almost all source files: updated the copyright dates
+
+2020-04-28  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	mentioned the release of SISCone 3.0.5
+
+2020-04-23  Gavin Salam  <gavin.salam@cern.ch> + Gregory
+
+	* CHECKLIST:
+	added note in CHECKLIST about verifying automake/conf version
+	and files
+
+2020-04-14  Gavin Salam  <gavin.salam@cern.ch>
+
+	* NEWS:
+	preparing NEWS towards release
+
+	* include/fastjet/internal/deprecated.hh:
+	replaced "and" in pre-processor line with "&&", to resolve
+	compilation failure reported by Andrii Verbyitskyi with oracle
+	12.6 c++ compiler.
+
+2020-04-07  Gavin Salam  <salam@hydra>
+
+	* src/MinHeap.cc (initialise):
+	rewrote a line of code in calculation of heap updates, replacing
+	&(_heap[2*loc+1]) with &(_heap[0]) + (2*loc+1).  This is intended
+	to resolve an issue reported by Andrii Verbyitskyi with gcc's
+	-D_GLIBCXX_SANITIZE_VECTOR which mistaken thinkgs we're actually
+	trying to access _heap[2*loc+1], when actually we're just getting
+	an address that we will use for comparisons afterwards.
+
+2020-02-23  Gavin Salam  <gavin.salam@cern.ch>
+
+	* INSTALL:
+	explicitly mentioned that --enable-cgal-header-only is to be
+	used instead of --enable-cgal when using CGAL v5
+
+	* m4/CGAL.m4 (ACX_CHECK_CGAL):
+	similar clarification
+
+2019-11-30  Gavin Salam  <gavin.salam@cern.ch>
+
+	* fortran_wrapper/Makefile.alt:
+	added some notes and commented lines about compilation on MacOS
+
+2019-11-29  Gregory Soyez  <soyez@fastjet.fr>
+
+	* configure.ac:
+	* include/fastjet/config_win.h:
+	* Doxyfile:
+	* tex/fastjet-doc.tex:
+	changed version to 3.3.4-devel
+
 2019-11-29  Gregory Soyez  <soyez@fastjet.fr>
 
 	* Release of FastJet fastjet-3.3.3

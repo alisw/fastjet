@@ -1,4 +1,4 @@
-// $Id: functions.hh 1235 2019-07-15 12:49:48Z peter.berta $
+// $Id: functions.hh 1240 2020-02-23 13:51:05Z peter.berta $
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet contrib.
