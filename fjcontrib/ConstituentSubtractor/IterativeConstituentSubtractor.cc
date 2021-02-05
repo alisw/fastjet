@@ -135,7 +135,7 @@ namespace contrib{
       } 
     }    
     _ghosts_rapidity_sorted=original_value_of_ghosts_rapidity_sorted; // Setting _ghosts_rapidity_sorted to its original value
-    if (_particle_selector) subtracted_particles.insert(std::end(subtracted_particles), std::begin(unselected_particles), std::end(unselected_particles));
+    if (_particle_selector) subtracted_particles.insert(subtracted_particles.end(), unselected_particles.begin(), unselected_particles.end());
     return subtracted_particles;
   }
 

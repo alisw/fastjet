@@ -11,7 +11,7 @@
 /// \endverbatim
 
 //----------------------------------------------------------------------
-// $Id: example.cc 1153 2018-08-22 11:56:35Z frdreyer $
+// $Id: example.cc 1243 2020-02-23 19:48:27Z salam $
 //
 // Copyright (c) -, Frederic A. Dreyer, Gavin P. Salam, Gregory Soyez
 //
@@ -59,7 +59,7 @@ int main(){
        << filename << endl;
 
   ofstream outfile;
-  outfile.open(filename);
+  outfile.open(filename.c_str());
   
   // first get some anti-kt jets
   double R = 1.0, ptmin = 100.0;

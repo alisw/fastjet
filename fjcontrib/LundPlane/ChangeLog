@@ -1,3 +1,13 @@
+2020-02-23  Gavin Salam  <gavin.salam@cern.ch>
+
+	* NEWS:
+	* VERSION:
+	preparing for release of 1.0.3
+
+	* example.cc:
+	changed outfile open(filename) to outfile.open(filename.c_str());
+	to attempt to solve issue reported by Steven Schramm.
+
 2018-10-26  Gavin Salam <gavin.salam@cern.ch>
 
 	* read_lund_json.py:

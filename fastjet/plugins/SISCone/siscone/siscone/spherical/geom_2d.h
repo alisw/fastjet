@@ -23,8 +23,8 @@
 // along with this program; if not, write to the Free Software               //
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA //
 //                                                                           //
-// $Revision:: 378                                                          $//
-// $Date:: 2016-02-24 15:10:38 +0100 (Wed, 24 Feb 2016)                     $//
+// $Revision:: 422                                                          $//
+// $Date:: 2020-04-22 11:51:09 +0200 (Wed, 22 Apr 2020)                     $//
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SPH_GEOM_2D_H__
@@ -84,13 +84,13 @@ public:
 private:
   /// return the cell index corrsponding to a theta value
   inline unsigned int get_theta_cell(double theta){
-    if (theta>=theta_max) return 1<<31;
-    return (unsigned int) (1 << ((int) (32*((theta-theta_min)/(theta_max-theta_min)))));
+    if (theta>=theta_max) return 1u<<31;
+    return (unsigned int) (1u << ((int) (32*((theta-theta_min)/(theta_max-theta_min)))));
   }
 
   /// return the cell index corrsponding to a phi value
   inline unsigned int get_phi_cell(double phi){
-    return (unsigned int) (1 << ((int) (32*phi/twopi+16)%32));
+    return (unsigned int) (1u << ((int) (32*phi/twopi+16)%32));
   }
 };
 

@@ -1,3 +1,7 @@
+2020/02/23: release of version 1.4.5:
+        - Further removal of C++11 extensions which were missed previously
+
+
 2019/07/15: release of version 1.4.4:
         - Removed two more C++11 extensions
 

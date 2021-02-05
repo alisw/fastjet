@@ -1,4 +1,4 @@
-// $Id: example_whole_event_using_charged_info.cc 1235 2019-07-15 12:49:48Z peter.berta $
+// $Id: example_whole_event_using_charged_info.cc 1240 2020-02-23 13:51:05Z peter.berta $
 //
 //----------------------------------------------------------------------
 // Example on how to do pileup correction on the whole event
