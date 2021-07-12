@@ -31,6 +31,10 @@
   showstringspaces=false,
   keepspaces=true
 }
+% the following makes it possible to write \lstinline"some_command"
+% But note that it then becomes impossible to use the " character
+% anywhere else.
+\lstMakeShortInline{"}
 
 %% \lstset{% general command to set parameter(s)
 %%   columns=fullflexible
@@ -58,7 +62,7 @@
 \newcommand{\ttt}[1]{{\small\texttt{#1}}}
 %\newcommand{\ttt}[1]{\scalebox{0.9}{\texttt{#1}}}
 %\newcommand{\ttt}[1]{\texttt{#1}}
-\newcommand{\comment}[1]{\textbf{[#1]}}
+\newcommand{\comment}[1]{{\color{red}\textbf{[#1]}}}
 \newcommand{\order}[1]{{\cal O}\left(#1\right)}
 \newcommand{\ie}{{\it i.e.}\ }
 \newcommand{\eg}{{\it e.g.}\ }
@@ -77,18 +81,17 @@
 
 \title{\sf FastJet user manual%
   \\ \large (for version
-  3.3.4%  %%%-VERSION-NUMBER (do not remove this comment; used
+  3.4.0%  %%%-VERSION-NUMBER (do not remove this comment; used
              %  for automatic version-number changes; version number must
              %  stay one a single line)
   )
 }
-\author{Matteo Cacciari,$^{1,2}$ Gavin P. Salam$^{3,4,}$\footnote{On
-    leave from CERN, Theoretical Physics Department, Geneva,
-    Switzerland and from CNRS, UMR 7589, LPTHE, F-75005, Paris, France.}\; and Gregory Soyez$^{5}$\\[10pt]
+\author{Matteo Cacciari,$^{1,2}$ Gavin P. Salam$^{3,4}$ and Gregory Soyez$^{5}$\\[10pt]
   \normalsize
-  $^1$LPTHE, UPMC Univ.~Paris 6 and CNRS UMR 7589, Paris, France\\
-  \normalsize
-  $^2$Universit\'e Paris Diderot, Paris, France\\
+  $^1$ Sorbonne Universit\'e, CNRS, Laboratoire de Physique Th\'eorique et Hautes
+  \'Energies,\\[-5pt] \normalsize LPTHE, F-75005 Paris, France\\
+    \normalsize
+  $^2$ Universit\'e de Paris, LPTHE, F-75005 Paris, France\\
   \normalsize
   $^3$ Rudolf Peierls Centre for Theoretical Physics,\\[-5pt]
   \normalsize
@@ -96,7 +99,7 @@
   \normalsize
   $^4$ All Souls College, Oxford, United Kingdom\\
   \normalsize
-  $^5$Institut de Physique Th\'eorique, CNRS, CEA Saclay, Universit\'e
+  $^5$ Institut de Physique Th\'eorique, CNRS, CEA Saclay, Universit\'e
   Paris-Saclay, France
 %  $^3$CERN, Physics Department, Theory Unit, Geneva, Switzerland\\
 %  \normalsize
@@ -532,9 +535,9 @@ you're done go back to the original directory
  make install
  cd ..
 \end{verbatim}
-If you copy and paste the above lines from one very widespread PDF
-viewer, you should note that the first line contains \emph{back-quotes}
-not forward quotes but that your PDF viewer may nevertheless paste
+You should note that the first line contains \emph{back-quotes}
+not forward quotes, but that if you copy and paste the above lines from 
+one very widespread PDF viewer, it may nevertheless paste
 forward quotes, causing problems down the line (the issue arises again
 below). 
 
@@ -3255,7 +3258,7 @@ The main method that is available in \fastjet involves the
 determination of the distribution of $p_t/A$ for the jets in a given
 event (or region of the event) and then taking the median of the
 distribution as an estimate of $\rho$, as proposed in~\cite{cs} and
-studied in detail also in~\cite{Cacciari:2009dp,GridMedianLH}.
+studied in detail also in~\cite{Cacciari:2009dp,Soyez:2018opl}.
 %
 This is largely insensitive to the presence of a handful of hard jets, and
 avoids any need for introducing a $p_t$ scale to distinguish hard and
@@ -3280,7 +3283,7 @@ This has the advantage of simplicity and much greater speed.
 One may worry that a hard jet will sometimes lie at a corner of
 multiple grid cells, inducing larger biases in the median than with a
 normal jet finder jets, however we have found this not
-to be an issue in practice~\cite{GridMedianLH}.
+to be an issue in practice~\cite{Soyez:2018opl}.
 
 \subsection{General Usage}\label{sec:bkg_general_usage}
 
@@ -3307,7 +3310,7 @@ definition.
 We have found that the $k_t$ or Cambridge/Aachen jet algorithms with $R
 = 0.4 - 0.6$ generally provide adequate background estimates, with
 the lower range of $R$ values to be preferred if the events are likely
-to be busy~\cite{Cacciari:2009dp,GridMedianLH}.
+to be busy~\cite{Cacciari:2009dp,Soyez:2018opl}.
 %
 An active area with explicit ghosts is generally
 recommended.\footnote{With the $k_t$ algorithm one may also use a
@@ -3335,7 +3338,7 @@ For the grid based method one creates a
                                     double requested_grid_spacing);
 \end{lstlisting}
 We have found grid spacings in the range $0.5-0.7$ to be
-adequate~\cite{GridMedianLH}, with lower values preferred for events
+adequate~\cite{Soyez:2018opl}, with lower values preferred for events
 that are likely to have high multiplicities.
 
 Both of the above background estimators derive from a
@@ -3352,15 +3355,16 @@ background density and a measure of its fluctuations with the two
 following calls 
 %
 \begin{lstlisting}
+  BackgroundEstimate bkgd_estimate = bge.estimate();
   // the median of ($p_t$/area) for grid cells, or for jets that pass the selection cut, 
   // making use also of information on empty area in the event (in the jets case)
-  rho = bge.rho(); 
+  rho = estimate.rho(); 
 
   // an estimate of the fluctuations in the $p_t$ density per unit $\smash{\sqrt{A}}$,
   // which is obtained from the 1-sigma half-width of the distribution of pt/A.
   // To be precise it is defined such that a fraction (1-0.6827)/2 of the jets
   // (including empty jets) have $p_t/A < \rho - \sigma / \sqrt{\langle A \rangle}$
-  sigma = bge.sigma(); 
+  sigma = bkgd_estimate.sigma(); 
 \end{lstlisting}
 Note that $\rho$ and $\sigma$ determinations count empty area within
 the relevant region as consisting of jets of zero $p_t$.
@@ -3405,9 +3409,11 @@ The subtractor can then be used as follows:
   PseudoJet subtracted_jet = subtractor(jet);
   vector<PseudoJet> subtracted_jets = subtractor(jets);
 \end{lstlisting}
-The subtractor normally returns \ttt{jet - bge.rho(jet)*jet.area\_4vector()}.
+The subtractor normally returns \ttt{jet - rho*jet.area\_4vector()},
+where \ttt{rho} may be estimated locally (see below,
+section~\ref{sec:BGE-positional}).
 %
-If \ttt{jet.pt() < bge.rho(jet)*jet.area\_4vector().pt()}, then
+If \ttt{jet.pt() < rho*jet.area\_4vector().pt()}, then
 the subtractor instead returns a jet with zero 4-momentum (so that
 \ttt{(subtracted\_jet==0)} returns \ttt{true}).
 %
@@ -3435,14 +3441,18 @@ $\rho$ based on all jets or grid cells from (say) $|y|<4.5$.
 %
 Two techniques are described below to help alleviate this problem.
 %
-In each case the properties of the background are to be obtained
-through the methods (available for both
-\ttt{JetMedianBackgroundEstimator} and
+In each case the properties of the background are to be obtained as
+follows (available for both \ttt{JetMedianBackgroundEstimator} and
 \ttt{GridMedianBackgroundEstimator})
 \begin{lstlisting}
-  double rho  (const PseudoJet & jet); // $p_t$ density per unit area $A$ near jet
-  double sigma(const PseudoJet & jet); // fluctuations in the $p_t$ density near jet
+  // get an estimate of the background in the vicinity of the given jet
+  BackgroundEstimate bkgd_estimate = bge.estimate(jet);
+  // and then extract specific information about the background
+  double rho   = bkgd_estimate.rho();   // $p_t$ density per unit area $A$ near jet
+  double sigma = bkgd_estimate.sigma(); // fluctuations in the $p_t$ density near jet
 \end{lstlisting}
+%  double rho  (const PseudoJet & jet); 
+%  double sigma(const PseudoJet & jet); // 
 
 
 %......................................................................
@@ -3550,18 +3560,19 @@ from \ttt{FunctionOfPseudoJet<double>} --- see appendix
   // tell JetMedianBackgroundEstimator or GridMedianBackgroundEstimator about the rescaling
   bge.set_rescaling_class(&rescaling);
 \end{lstlisting}
-Subsequent calls to \ttt{rho()} will return the median of the
-distribution $p_t/A / \ttt{rescaling}(y)$ (rather than $p_t/A$).
+Subsequent calls to \ttt{bge.estimate()} will be based on the on median of
+the distribution $p_t/A / \ttt{rescaling}(y)$ (rather than $p_t/A$).
 %
-Any calls to \ttt{rho(jet)} and \ttt{sigma(jet)} will include an
-additional factor of \ttt{rescaling}$(y_\ttt{jet})$.
+Any calls to \ttt{bge.estimate(jet)} will include an additional factor of
+\ttt{rescaling}$(y_\ttt{jet})$ in the resulting
+\ttt{BackgroundEstimate}.
 %
 Note that any overall factor in the rescaling function cancels out for
-\ttt{rho(jet)} and \ttt{sigma(jet)}, but not for calls to \ttt{rho()}
-and \ttt{sigma()} (which are in any case less meaningful when a
-rapidity dependence is being assumed for the background).
+\ttt{bge.estimate(jet)}, but not for calls to \ttt{bge.estimate()}
+(which are in any case less meaningful when a rapidity dependence is
+being assumed for the background).
 
-In ongoing studies \cite{GridMedianLH}, we have found that despite its
+We have found~\cite{Soyez:2018opl} that despite its
 use of an average background shape, the rescaling method generally
 performs comparably to local estimation in terms of its residual $p_t$
 dispersion after subtraction.
@@ -3608,8 +3619,8 @@ quantity $m_{\delta,\text{patch}}/A_{\text{patch}}$, where
 By default, as of \fastjet 3.1, the grid and jet-median background
 estimators automatically determine $\rho_m$. 
 %
-It is returned from a call to \ttt{rho\_m()}, with fluctuations
-accessible through \ttt{sigma\_m()}.
+It is available within a \ttt{BackgroundEstimate} via a call to
+\ttt{rho\_m()}, with fluctuations accessible through \ttt{sigma\_m()}.
 %
 The determination of $\rho_m$ involves a small speed penalty and can
 be disabled with a call to \ttt{set\_compute\_rho\_m(false)} for
@@ -3687,14 +3698,20 @@ observables as discussed in Refs.~\cite{Soyez:2012hv,Cacciari:2012mu}.
 \subsection{Other facilities}
 \label{sec:BGE-other-facilities}
 
-The \ttt{JetMedianBackgroundEstimator} has a number of enquiry
-functions to access information used internally within the median
-$\rho$ and $\sigma$ determination.
+The \ttt{BackgroundEstimate} class has one further enquiry function:
 \begin{lstlisting}
-  // Returns the mean area of the jets used to actually compute the background properties,
-  // including empty area and jets (available also in grid-based estimator)
+  // Returns the mean area of the jets or grid cells used to actually compute 
+  // the background properties, including empty area and/or pure ghost jets
   double mean_area() const;
-   
+\end{lstlisting}
+A \ttt{BackgroundEstimate} from a \ttt{JetMedianBackgroundEstimator} contains
+yet more information that can be obtained as follows
+\begin{lstlisting}
+  JetMedianBackgroundEstimator::Extras extras = \
+                    bkgd_estimate.extras<JetMedianBackgroundEstimator>();
+\end{lstlisting}
+where the \ttt{extras} object has the following member functions:
+\begin{lstlisting}
   // Returns the number of jets used to actually compute the background properties
   // (including empty jets)
   unsigned int n_jets_used() const;
@@ -3780,11 +3797,10 @@ of a cluster sequence:
   // (re)set the jets to be used by future calls to rho() etc. 
   void set_jets(const std::vector<PseudoJet> & jets);
 \end{lstlisting}
-Note that the
-jets passed via the \ttt{set\_jets()} call above must all originate from a common
-\ttt{ClusterSequenceAreaBase} type class.
+Note that the jets passed via the \ttt{set\_jets()} call above must
+all originate from a common \ttt{ClusterSequenceAreaBase} type class.
 
-
+ 
 %......................................................................
 \subsection{Recommendations}
 
@@ -4319,6 +4335,281 @@ the user to the online doxygen documentation for further details.
 
 
 
+%======================================================================
+\section{Thread safety}
+\label{sec:thread-safety}
+
+As of version 3.4.0, FastJet has the option of being configured with
+thread-safety enabled.
+%
+Two variants are possible: limited and full thread safety.
+%
+Both require \ttt{C++11} support in the compiler.
+%
+Limited thread safety should come with essentially zero overhead in
+normal operation, and is generally suitable if each thread processes a
+distinct event.
+%
+Full thread safety allows separate threads to work concurrently on a
+common event or collection of \ttt{PseudoJet}s (e.g.\ multiple threads
+each applying a different \ttt{JetDefinition} algorithm or
+\ttt{Transformer} to the same set of input \ttt{PseudoJet}s).
+%
+It involves adaptations of frequently used core objects, which may
+have a moderate speed impact: on some systems, we have observed a
+slowdown of up to $10{-}15\%$.
+%
+Summaries of the classes that are thread safe or not with the two
+options are given below in
+sections~\ref{sec:limit-thre-safety} and \ref{sec:full-thread-safety}.
+%
+Suggestions concerning thread-safe workflows are given in
+section~\ref{sec:thread-safety-workflows}. 
+
+As of version 3.4.0, thread safety is not yet guaranteed in plugins.
+
+
+%----------------------------------------------------------------------
+\subsection{Limited thread safety}
+\label{sec:limit-thre-safety}
+
+Limited thread safety, can be obtained by configuring with the
+\ttt{--enable-limited-thread-safety} option.
+%
+Output of the banner, error-handling and warnings are thread
+safe.
+%
+Concurrent read-access and copying of \ttt{JetDefinition} are safe, so
+long as one doesn't use \ttt{delete\_recombiner\_when\_unused()} or
+\ttt{delete\_plugin\_when\_unused()}.
+%
+Concurrent read access of \ttt{AreaDefinition} objects is also safe
+across threads (see section \ref{sec:threads-ghosted-areas} for the
+handling of seeds for ghost-generation).
+%
+Core objects for which concurrent read-access and copying of a single
+object are not safe across threads include \ttt{PseudoJet} and
+\ttt{SharedPtr}, as well as classes that rely on them such as
+\ttt{ClusterSequence}.
+%
+In particular, \ttt{PseudoJet} objects cache rapidity and azimuth the
+first time these are evaluated, and this is not thread safe.
+
+
+% Concurrent read-access of \ttt{PseudoJet} objects is not safe across
+% threads, for reasons related to internal caching of rapidity and
+% azimuth and non-thread safety of the \ttt{SharedPtr}.
+% %
+% Other objects that rely on \ttt{SharedPtr} are also not thread-safe
+% for any operation where the \ttt{SharedPtr} count might be altered.
+
+%----------------------------------------------------------------------
+\subsection{Full thread safety}
+\label{sec:full-thread-safety}
+
+Full thread safety is obtained by configuring with
+\ttt{--enable-thread-safety}.
+%
+Concurrent read-access of \ttt{PseudoJet} objects is now possible,
+and \ttt{SharedPtr} objects are thread safe.
+%
+This enables thread safety across \fastjet operations marked as
+\ttt{const}.
+
+In our implementation, the \ttt{SharedPtr} object involves an atomic
+counter and the \ttt{PseudoJet} involves a spin-lock the first time
+\ttt{phi()} or \ttt{rap()} are called, in order to safely cache their
+values.
+%
+Both of these strategies can lead to timing overheads, which in our
+tests have not exceeded $10{-}15\%$. 
+
+%----------------------------------------------------------------------
+\subsection{Specific work-flows}
+\label{sec:thread-safety-workflows}
+
+\fastjet usage sometimes entails non-const operations and/or
+operations that affect global (static) variables.
+%
+Below, we outline specific cases where care is needed even with
+thread-safety enabled.
+
+%......................................................................
+\subsubsection{Ghosted areas}
+\label{sec:threads-ghosted-areas}
+%
+Areas that use ghosts, cf.\ Section~\ref{sec:ghosted-areas}, rely on
+an internal random number generator to place the ghosts.
+%
+By default the generator is static and common across all threads.
+%
+When using the static generator, a lock is employed to ensure that the
+full set of ghosts being added to a given event is generated with a
+single consistent sequence of random numbers (any concurrent thread
+needing a distinct set of ghosts waits its turn until the static
+generator is available). 
+%
+Given a \ttt{ClusterSequenceArea csa}, the random seed that was used
+for that set of ghosts can be retrieved with 
+\begin{lstlisting}
+  vector<int> seeds;
+  csa.area_def().ghost_spec().get_last_seed(seeds);
+\end{lstlisting}
+Alternatively, given a ghosted \ttt{AreaDefinition area\_def}, the
+\ttt{ClusterSequenceArea} can use ghosts generated using a specific
+set of seeds for the random number generator, for example
+\begin{lstlisting}
+  vector<int> seed{12345,67890};
+  ClusterSequenceArea csa(particles, jet_def, area_def.with_fixed_seed(seed));
+\end{lstlisting}
+The \ttt{area\_def.with\_fixed\_seeds(seeds)} call returns a copy of
+the \ttt{area\_def} with the specified seeds.\footnote{If using an
+  area definition with a repeat value greater than one, this method
+  will not work, because the seeds will be the same for each
+  repetition of the ghosts.
+  %
+  In that case, the user may create their own random generator (one
+  per thread), and in each thread create a \ttt{GhostedAreaSpec} with
+  that generator. 
+}
+%
+The above functionality is available even without thread safety and
+functions in a thread-safe manner already with the limited thread
+safety option.
+
+%----------------------------------------------------------------------
+\subsubsection{Background estimation and subtraction}
+\label{sec:threads-backgr-estim-subtr}
+
+The classes derived from \ttt{BackgroundEstimatorBase} store
+information about an event when one calls member functions such as
+\ttt{set\_particles(...)}.
+%
+Thus it is not safe to use a single \ttt{BackgroundEstimatorBase}
+across concurrent threads that are each processing a different event.
+%
+Instead, given a global \ttt{BackgroundEstimatorBase}
+\ttt{global\_bge}, it is possible to ask for a copy of the estimator
+locally within a thread, and then set the particles on the local copy
+and use that for accessing information about the background
+\begin{lstlisting}
+  // copy the global BackgroundEstimator class
+  // (the user will be responsible for deleting it and may
+  // wish to put it into a unique_ptr)
+  BackgroundEstimatorBase * local_bge(global_bge.copy());
+
+  // set the particles on the local copy
+  local_bge->set_particles(particles);
+  // alternatively set the particles with a fixed a specific seed for
+  // the ghost generation
+  vector<int> seed{12345,67890};
+  local_bge->set_particles_with_seed(particles, seed);
+  
+  // and access information about the background across the whole
+  // event (if supported), using its operator() function
+  BackgroundEstimate bkgd_estimate1 = local_bge->estimate();
+  // or in the vicinity of a specific jet
+  BackgroundEstimate bkgd_estimate2 = local_bge->estimate(jet);
+
+  // extract rho
+  double rho1 = bkgd_estimate1.rho();
+  double rho2 = bkgd_estimate2.rho();
+\end{lstlisting}
+If using a globally defined \ttt{Subtractor} \ttt{global\_subtractor},
+one similarly needs to take a copy and point that copy to the
+thread-local \ttt{BackgroundEstimatorBase}:
+\begin{lstlisting}
+  // copy the subtractor
+  Subtractor local_subtractor = global_subtractor;
+  // arrange for the copy to use the local background estimator
+  local_subtractor.set_background_estimator(local_bge);
+\end{lstlisting}
+%
+The user is responsible for deleting the \ttt{local\_gbe} when it is
+no longer needed.
+
+Note that prior to version 3.4.0 of \fastjet, the
+\ttt{BackgroundEstimate} class did not exist and one accessed
+information about the background directly from member functions of the
+\ttt{BackgroundEstimatorBase} instance, e.g.\
+\ttt{BackgroundEstimatorBase::rho(jet)}.
+%
+%
+For \ttt{JetMedianBackgroundEstimator} objects that involve a
+\ttt{Selector} that takes a reference,
+(section~\ref{sec:local-bkgd-estimation}),
+%
+calls to \ttt{rho(jet)}, \ttt{rho\_m(jet)}, \ttt{sigma(jet)},
+\ttt{sigma\_m(jet)} (which are all non-\ttt{const}) update the state
+of the \ttt{JetMedianBackgroundEstimator} object, which then affects
+the result of subsequent calls to \ttt{mean\_area()},
+\ttt{n\_jets\_used()}, \ttt{jets\_used()}, \ttt{empty\_area()} and
+\ttt{n\_empty\_jets()}.
+%
+Without full thread safety, concurrent calls to \ttt{rho(jet)}, etc.,
+can cause the code to crash.
+%
+Compiling with full thread safety enabled eliminates the risk of a
+crash. 
+%
+However, even with full thread safety, the results from
+\ttt{mean\_area()} calls, etc., can be wrong if separate threads are
+each calling \ttt{rho(jet)} with different jets.
+%
+So we recommend that any code that uses background estimation be
+updated to access the results through the \ttt{BackgroundEstimate}
+class.
+%
+The details of its usage are given in
+sections~\ref{sec:bkg_estim_usage} and
+\ref{sec:BGE-other-facilities}. 
+
+%......................................................................
+\subsubsection{I/O}
+\label{sec:thread-safe-io}
+
+There are three components of the FastJet code that perform text
+output: the banner output, the \ttt{LimitedWarning} class and the
+\ttt{Error} class.
+%
+With limited thread safety enabled, all are thread safe in the sense
+that they will not crash the code.
+
+The banner will be output just once, and to ensure reproducibility of
+text output the user may wish to call
+\ttt{ClusterSequence::print\_banner()} before creating threads (the
+stream can be controlled with
+\ttt{ClusterSequence::set\_fastjet\_banner\_stream()}).
+%
+
+For the \ttt{LimitedWarning} and \ttt{Error} classes, the user has no
+direct control over the stage at which output may come.
+%
+To prevent garbled output, the user may perform calls to
+\begin{lstlisting}
+    LimitedWarning::set_default_stream_and_mutex(&user_stream, &user_mutex);
+    Error::set_default_stream_and_mutex(&user_stream, &user_mutex);
+\end{lstlisting}
+where the user provides a pointer to a stream and a mutex.
+%
+The mutex is then locked whenever something is to be output to the
+stream.
+%
+If the user is sending their own output to that same stream, it is
+their responsibility to ensure that they lock it when performing their
+own output.
+%
+Note that the \ttt{LimitedWarning} warning class outputs a ``(LAST
+SUCH WARNING)'' string the last time it outputs a warning of a given
+kind.
+%
+When running concurrent threads, that string may not appear with the
+warning that is actually the last of that kind.
+%
+Recall that output from warnings and errors can be disabled by setting
+a null stream for each of them and that a summary of the warnings can
+be obtained as a string at any time with a call to
+\ttt{LimitedWarning::summary()}. 
 
 %======================================================================
 \section{Compilation notes}
@@ -6404,9 +6695,14 @@ in {\it Proc. of the APS/DPF/DPB Summer Study on the Future of
   JHEP {\bf 1004 } (2010)  065.
   [arXiv:0912.4926 [hep-ph]].
 
-\bibitem{GridMedianLH} M.~Cacciari, G.~P.~Salam and G.~Soyez, contribution in
-  preparation to proceedings of ``Workshop on TeV Colliders'', Les
-  Houches, June 2011.
+%\cite{Soyez:2018opl}
+\bibitem{Soyez:2018opl}
+G.~Soyez,
+%``Pileup mitigation at the LHC: A theorist's view,''
+Phys. Rept. \textbf{803} (2019), 1-158
+doi:10.1016/j.physrep.2019.01.007
+[arXiv:1801.09721 [hep-ph]].
+% 26 citations counted in INSPIRE as of 22 Feb 2021
 
 \bibitem{Soyez:2012hv}
   G.~Soyez, G.~P.~Salam, J.~Kim, S.~Dutta and M.~Cacciari,
@@ -6559,4 +6855,4 @@ in {\it Proc. of the APS/DPF/DPB Summer Study on the Future of
 
 
 
-%  LocalWords:  NNBase
+%  LocalWords:  NNBase reproducibility

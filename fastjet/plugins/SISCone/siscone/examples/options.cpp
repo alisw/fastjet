@@ -20,8 +20,8 @@
 // along with this program; if not, write to the Free Software               //
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA //
 //                                                                           //
-// $Revision:: 213                                                          $//
-// $Date:: 2008-03-17 17:05:59 +0100 (Mon, 17 Mar 2008)                     $//
+// $Revision::                                                              $//
+// $Date::                                                                  $//
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "options.h"

@@ -23,8 +23,8 @@
 // along with this program; if not, write to the Free Software               //
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA //
 //                                                                           //
-// $Revision:: 255                                                          $//
-// $Date:: 2008-07-12 17:40:35 +0200 (Sat, 12 Jul 2008)                     $//
+// $Revision::                                                              $//
+// $Date::                                                                  $//
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SPH_PROTOCONES_H__

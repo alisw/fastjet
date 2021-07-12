@@ -2,9 +2,9 @@
 #define __FASTJET_JETDEFINITION_HH__
 
 //FJSTARTHEADER
-// $Id: JetDefinition.hh 4442 2020-05-05 07:50:11Z soyez $
+// $Id$
 //
-// Copyright (c) 2005-2020, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -362,12 +362,12 @@ public:
   ///
   /// the ordering of arguments here is old and deprecated (except
   /// as the common constructor for internal use)
-  FASTJET_DEPRECATED_MSG("This argument ordering is deprecated. Use JetDefinition(alg, R, strategy, scheme[, n_parameters]) instead")
+  FASTJET_DEPRECATED_MSG("This argument ordering is deprecated. Use JetDefinition(alg, R, strategy, scheme[, n_parameters]) instead",
   JetDefinition(JetAlgorithm jet_algorithm_in, 
                 double R_in, 
                 Strategy strategy_in,
                 RecombinationScheme recomb_scheme_in = E_scheme,
-                int nparameters_in = 1){
+                int nparameters_in = 1)){
     (*this) = JetDefinition(jet_algorithm_in,R_in,recomb_scheme_in,strategy_in,nparameters_in);
   }
 

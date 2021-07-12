@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 14-groomers.cc 4354 2018-04-22 07:12:37Z salam $
+// $Id$
 //
 // Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //

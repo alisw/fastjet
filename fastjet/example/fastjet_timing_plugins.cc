@@ -1,5 +1,5 @@
 //STARTHEADER
-// $Id: fastjet_timing_plugins.cc 4354 2018-04-22 07:12:37Z salam $
+// $Id$
 //
 // Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
@@ -197,6 +197,7 @@
 #include "fastjet/ClusterSequenceArea.hh"
 #include "fastjet/tools/JetMedianBackgroundEstimator.hh"
 #include "fastjet/tools/GridMedianBackgroundEstimator.hh"
+#include "fastjet/tools/Subtractor.hh"
 #include "fastjet/Selector.hh"
 #else
 #include "fjcore.hh"
@@ -269,6 +270,13 @@ inline double pow2(const double x) {return x*x;}
 // pretty print the jets and their subjets
 void print_jets_and_sub (const vector<PseudoJet> & jets, double dcut);
 
+#ifndef __FJCORE__
+void print_jets_bkgd(const vector<PseudoJet> &jets,
+                     const vector<PseudoJet> &subtracted_jets,
+                     BackgroundEstimatorBase * bge_ptr,
+                     bool do_subtractor);
+#endif // __FJCORE__
+
 // have various kinds of subjet finding, to test consistency among them
 //
 // this is needed in print_jets_and_sub and declaring it in the
@@ -306,9 +314,10 @@ void is_unavailable(const string & algname) {
 /// wrapped in fastjet
 int main (int argc, char ** argv) {
 
+  CmdLine cmdline(argc,argv);
+  cout << "# " << cmdline.command_line() << endl;
   ClusterSequence::print_banner();
 
-  CmdLine cmdline(argc,argv);
   cmdline_p = &cmdline;
   // allow the use to specify the Strategy either through the
   // -clever or the -strategy options (both will take numerical
@@ -360,8 +369,8 @@ int main (int argc, char ** argv) {
   if (do_areas) {
     assert(!write); // it's incompatible
     GhostedAreaSpec ghost_spec(ghost_maxrap, 
-				   cmdline.value("-area:repeat", 1),
-				   cmdline.value("-ghost-area", 0.01));
+                                   cmdline.value("-area:repeat", 1),
+                                   cmdline.value("-ghost-area", 0.01));
     if (cmdline.present("-area:fj2")) ghost_spec.set_fj2_placement(true);
     if (cmdline.present("-area:explicit")) {
       area_def = AreaDefinition(active_area_explicit_ghosts, ghost_spec);
@@ -370,7 +379,7 @@ int main (int argc, char ** argv) {
     } else if (cmdline.present("-area:voronoi")) {
       double Rfact = cmdline.value<double>("-area:voronoi");
       area_def = AreaDefinition(voronoi_area, 
-				    VoronoiAreaSpec(Rfact));
+                                    VoronoiAreaSpec(Rfact));
     } else {
       cmdline.present("-area:active"); // allow, but do not require, arg
       area_def = AreaDefinition(active_area, ghost_spec);
@@ -384,17 +393,30 @@ int main (int argc, char ** argv) {
 #ifndef __FJCORE__
   bool do_bkgd_csab = false, do_bkgd_jetmedian = false, do_bkgd_fj2 = false;
   bool do_bkgd_gridmedian = false;
+  bool do_bkgd_localrange = false;
+  bool do_subtractor = false;
+  double bkgd_alt_ktR = -1.0;
+  BackgroundRescalingYPolynomial * bkgd_rescaling = 0;
   Selector bkgd_range;
   if (do_bkgd) {
     bkgd_range = SelectorAbsRapMax(ghost_maxrap - ktR); 
     if      (cmdline.present("-bkgd:csab"))      {do_bkgd_csab = true;}
     else if (cmdline.present("-bkgd:jetmedian")) {do_bkgd_jetmedian = true;
       do_bkgd_fj2 = cmdline.present("-bkgd:fj2");
-    } else if (cmdline.present("-bkgd:gridmedian")) {do_bkgd_gridmedian = true;
+      do_bkgd_localrange = cmdline.present("-bkgd:localrange");
+      bkgd_alt_ktR = cmdline.value("-bkgd:alt-ktR", bkgd_alt_ktR);
+      if (do_bkgd_localrange) bkgd_range = SelectorStrip(1.5);
+    } else if (cmdline.present("-bkgd:gridmedian")) {
+      do_bkgd_gridmedian = true;
     } else {
       throw Error("with the -bkgd option, some particular background must be specified (csab or jetmedian)");
     }
+    if (cmdline.present("-bkgd:rescaling")) {
+      bkgd_rescaling = new BackgroundRescalingYPolynomial(1.157,0,-0.0266,0,0.000048);
+    }
     assert(do_areas || do_bkgd_gridmedian);
+    do_subtractor = cmdline.present("-subtractor");
+    if (do_subtractor) assert(do_areas);
   }
 #else
   do_bkgd = false; 
@@ -471,9 +493,12 @@ int main (int argc, char ** argv) {
   if (all_algs || cmdline.present("-pxcone")) {
 #ifdef FASTJET_ENABLE_PLUGIN_PXCONE
     double min_jet_energy = 5.0;
+    // mode: 1=e+e-, 2=pp
+    int mode = cmdline.value("-pxcone-mode", 2);
+    bool E_scheme_jets = false;
     jet_defs.push_back( JetDefinition( new PxConePlugin (
                                       ktR, min_jet_energy,
-                                      overlap_threshold)));
+                                      overlap_threshold, E_scheme_jets, mode)));
 #else  // FASTJET_ENABLE_PLUGIN_PXCONE
     is_unavailable("PxCone");
 #endif // FASTJET_ENABLE_PLUGIN_PXCONE
@@ -492,7 +517,8 @@ int main (int argc, char ** argv) {
     int npass = cmdline.value("-npass",0);
     if (all_algs || cmdline.present("-siscone")) {
       double sisptmin = cmdline.value("-sisptmin",0.0);
-      SISPlug * plugin = new SISPlug (ktR, overlap_threshold,npass,sisptmin);
+      bool cache = cmdline.present("-cache");
+      SISPlug * plugin = new SISPlug (ktR, overlap_threshold,npass,sisptmin,cache);
       if (cmdline.present("-sm-pt")) plugin->set_split_merge_scale(SISPlug::SM_pt);
       if (cmdline.present("-sm-mt")) plugin->set_split_merge_scale(SISPlug::SM_mt);
       if (cmdline.present("-sm-Et")) plugin->set_split_merge_scale(SISPlug::SM_Et);
@@ -504,9 +530,9 @@ int main (int argc, char ** argv) {
     if (all_algs || cmdline.present("-sisconespheri")) {
       double sisEmin = cmdline.value("-sisEmin",0.0);
       SISConeSphericalPlugin * plugin = 
-	new SISConeSphericalPlugin(ktR, overlap_threshold,npass,sisEmin);
+        new SISConeSphericalPlugin(ktR, overlap_threshold,npass,sisEmin);
       if (cmdline.present("-ghost-sep")) {
-	plugin->set_ghost_separation_scale(cmdline.value<double>("-ghost-sep"));
+        plugin->set_ghost_separation_scale(cmdline.value<double>("-ghost-sep"));
       }
       jet_defs.push_back( JetDefinition(plugin));
     }
@@ -630,18 +656,18 @@ int main (int argc, char ** argv) {
       int ii, istat,id,m1,m2,d1,d2;
       double mass;
       linestream >> ii>> istat >> id >> m1 >> m2 >> d1 >> d2
-		 >> fourvec[0] >> fourvec[1] >> fourvec[2] >> mass;
+                 >> fourvec[0] >> fourvec[1] >> fourvec[2] >> mass;
       // current file contains mass of particle as 4th entry
       if (istat == 1) {
-	fourvec[3] = sqrt(+pow2(fourvec[0])+pow2(fourvec[1])
-			  +pow2(fourvec[2])+pow2(mass));
+        fourvec[3] = sqrt(+pow2(fourvec[0])+pow2(fourvec[1])
+                          +pow2(fourvec[2])+pow2(mass));
       }
     } else {
       if (massless) {
-	linestream >> fourvec[0] >> fourvec[1] >> fourvec[2];
-	fourvec[3] = sqrt(pow2(fourvec[0])+pow2(fourvec[1])+pow2(fourvec[2]));}
+        linestream >> fourvec[0] >> fourvec[1] >> fourvec[2];
+        fourvec[3] = sqrt(pow2(fourvec[0])+pow2(fourvec[1])+pow2(fourvec[2]));}
       else {
-	linestream >> fourvec[0] >> fourvec[1] >> fourvec[2] >> fourvec[3];
+        linestream >> fourvec[0] >> fourvec[1] >> fourvec[2] >> fourvec[3];
       }
     }
     PseudoJet psjet(fourvec);
@@ -666,16 +692,16 @@ int main (int argc, char ** argv) {
     // double kt = 1e-1;
     // for (int iphi = 0; iphi<nphi; iphi++) {
     //   for (int ieta = -neta; ieta<neta+1; ieta++) {
-    // 	double phi = (iphi+0.5) * (twopi/nphi) + rand()*0.001/RAND_MAX;
-    // 	double eta = ieta * (10.0/neta)  + rand()*0.001/RAND_MAX;
-    // 	kt = 1e-20*(1+rand()*0.1/RAND_MAX);
-    // 	double pminus = kt*exp(-eta);
-    // 	double pplus  = kt*exp(+eta);
-    // 	double px = kt*sin(phi);
-    // 	double py = kt*cos(phi);
-    // 	//cout << kt<<" "<<eta<<" "<<phi<<"\n";
-    // 	PseudoJet mom(px,py,0.5*(pplus-pminus),0.5*(pplus+pminus));
-    // 	particles.push_back(mom);
+    //         double phi = (iphi+0.5) * (twopi/nphi) + rand()*0.001/RAND_MAX;
+    //         double eta = ieta * (10.0/neta)  + rand()*0.001/RAND_MAX;
+    //         kt = 1e-20*(1+rand()*0.1/RAND_MAX);
+    //         double pminus = kt*exp(-eta);
+    //         double pplus  = kt*exp(+eta);
+    //         double px = kt*sin(phi);
+    //         double py = kt*cos(phi);
+    //         //cout << kt<<" "<<eta<<" "<<phi<<"\n";
+    //         PseudoJet mom(px,py,0.5*(pplus-pminus),0.5*(pplus+pminus));
+    //         particles.push_back(mom);
     //   }
     // }
   }
@@ -763,14 +789,14 @@ int main (int argc, char ** argv) {
       // construct the inverse of the above mapping
       vector<int> inv_unique_history(clust_seq->history().size());
       for (unsigned int i = 0; i < unique_history.size(); i++) {
-	inv_unique_history[unique_history[i]] = i;}
+        inv_unique_history[unique_history[i]] = i;}
 
       for (unsigned int i = 0; i < unique_history.size(); i++) {
-	ClusterSequence::history_element el = 
-	  clust_seq->history()[unique_history[i]];
-	int uhp1 = el.parent1>=0 ? inv_unique_history[el.parent1] : el.parent1;
-	int uhp2 = el.parent2>=0 ? inv_unique_history[el.parent2] : el.parent2;
-	printf("%7d u %15.8e %7d u %7d u\n",i,el.dij,uhp1, uhp2);
+        ClusterSequence::history_element el = 
+          clust_seq->history()[unique_history[i]];
+        int uhp1 = el.parent1>=0 ? inv_unique_history[el.parent1] : el.parent1;
+        int uhp2 = el.parent2>=0 ? inv_unique_history[el.parent2] : el.parent2;
+        printf("%7d u %15.8e %7d u %7d u\n",i,el.dij,uhp1, uhp2);
       }
     }
 
@@ -800,10 +826,10 @@ int main (int argc, char ** argv) {
       for (unsigned i = 0; i < sisjets.size(); i++) {
         printf("%15.8f %15.8f %15.8f %12d %8d %8u\n",
                sisjets[i].rap(), sisjets[i].phi(), sisjets[i].perp(), 
-	       sisjets[i].user_index(), extras->pass(sisjets[i]),
-	       (unsigned int) clust_seq->constituents(sisjets[i]).size()
-	       );
-	
+               sisjets[i].user_index(), extras->pass(sisjets[i]),
+               (unsigned int) clust_seq->constituents(sisjets[i]).size()
+               );
+        
       }
     }
 #endif // FASTJET_ENABLE_PLUGIN_SISCONE
@@ -812,42 +838,90 @@ int main (int argc, char ** argv) {
     if (do_bkgd) {
       double rho, sigma, mean_area, empty_area, n_empty_jets;
       ClusterSequenceAreaBase * csab = 
-	dynamic_cast<ClusterSequenceAreaBase *>(clust_seq.get());
+        dynamic_cast<ClusterSequenceAreaBase *>(clust_seq.get());
+      BackgroundEstimatorBase * bge_ptr = 0;
       if (do_bkgd_csab) {
-	csab->get_median_rho_and_sigma(bkgd_range, true, rho, sigma, mean_area);
-	empty_area = csab->empty_area(bkgd_range);
-	n_empty_jets = csab->n_empty_jets(bkgd_range);
+        csab->get_median_rho_and_sigma(bkgd_range, true, rho, sigma, mean_area);
+        empty_area = csab->empty_area(bkgd_range);
+        n_empty_jets = csab->n_empty_jets(bkgd_range);
       } else if (do_bkgd_jetmedian) {
-	JetMedianBackgroundEstimator bge(bkgd_range);
-	bge.set_provide_fj2_sigma(do_bkgd_fj2);
-	bge.set_cluster_sequence(*csab);
-	rho = bge.rho();
-	sigma = bge.sigma();
-	mean_area = bge.mean_area();
-	empty_area = bge.empty_area();
-	n_empty_jets = bge.n_empty_jets();
+        JetMedianBackgroundEstimator * bge = new JetMedianBackgroundEstimator(bkgd_range);
+        bge_ptr = bge;
+        // may be null
+        bge->set_rescaling_class(bkgd_rescaling);
+        bge->set_provide_fj2_sigma(do_bkgd_fj2);
+        if (bkgd_alt_ktR > 0) {
+          ClusterSequenceAreaBase * clust_seq_bkgd = 
+              new ClusterSequenceArea(particles, JetDefinition(kt_algorithm, bkgd_alt_ktR), area_def);
+          cout << "Alt JetDef for background-estimation CSAB: " << clust_seq_bkgd->jet_def().description() << endl;
+          bge->set_cluster_sequence(*clust_seq_bkgd);
+          clust_seq_bkgd->delete_self_when_unused();
+        } else {
+          bge->set_cluster_sequence(*csab);
+        }
+        if (!do_bkgd_localrange) {
+          rho = bge->rho();
+          sigma = bge->sigma();
+          mean_area = bge->mean_area();
+          empty_area = bge->empty_area();
+          n_empty_jets = bge->n_empty_jets();
+        }
       } else {
-	assert(do_bkgd_gridmedian);
+        assert(do_bkgd_gridmedian);
         double grid_rapmin, grid_rapmax;
         bkgd_range.get_rapidity_extent(grid_rapmin, grid_rapmax);
-	GridMedianBackgroundEstimator bge(grid_rapmax, 2*ktR);
-        bge.set_particles(particles);
-        rho = bge.rho();
-        sigma = bge.sigma();
-        mean_area = bge.mean_area();
+        GridMedianBackgroundEstimator * bge = new GridMedianBackgroundEstimator(grid_rapmax, 2*ktR);
+        bge_ptr = bge;
+        bge->set_rescaling_class(bkgd_rescaling);
+        bge->set_particles(particles);
+        rho = bge->rho();
+        sigma = bge->sigma();
+        mean_area = bge->mean_area();
         empty_area = 0;
         n_empty_jets = 0;
       }
-      cout << "  rho = " << rho 
-	   << ", sigma = " << sigma 
-	   << ", mean_area = " << mean_area
-	   << ", empty_area = " << empty_area
-	   << ", n_empty_jets = " << n_empty_jets
-	   << endl;
+      if (do_bkgd_localrange || do_subtractor) {
+        assert(bge_ptr != 0);
+        cout << "Background estimator: " << bge_ptr->description() << endl;
+        //vector<PseudoJet>
+        jets = SelectorAbsRapMax(3.0)(sorted_by_pt(csab->inclusive_jets()));
+        vector<PseudoJet> subjets;
+        if (do_subtractor) {
+          Subtractor subtractor(bge_ptr);
+          subtractor.set_use_rho_m(true);
+          subtractor.set_safe_mass(true);
+          cout << "Subtractor: " << subtractor.description() << endl;
+          subjets = subtractor(jets);
+        }
+        print_jets_bkgd(jets, subjets, bge_ptr, do_subtractor);
+        // cout << "i   pt  rap  phi  m  rho  rho_m  sigma  sigma_m" << endl;
+        // if (do_subtractor) cout << "isub ptsub rapsub phisub msub area" << endl;
+        // for (unsigned i = 0; i < jets.size(); i++) {
+        //   const PseudoJet & jet = jets[i];
+        //   cout << i << "   "
+        //        << " " << jet.pt() << " " << jet.rap() << " " << jet.phi() << " " << jet.m() 
+        //        << " " << bge_ptr->rho(jet) << " " << bge_ptr->rho_m(jet) 
+        //        << " " << bge_ptr->sigma(jet)  << " " << bge_ptr->sigma_m(jet) << endl;
+        //   if (do_subtractor) {
+        //     const PseudoJet & subjet = subjets[i];
+        //     cout << i << "sub"
+        //          << " " << subjet.pt() << " " << subjet.rap() << " " << subjet.phi() << " " << subjet.m() 
+        //          << " " << jet.area() << endl;
+        //   }
+        // }
+      } else {
+        cout << "  rho = " << rho 
+           << ", sigma = " << sigma 
+           << ", mean_area = " << mean_area
+           << ", empty_area = " << empty_area
+           << ", n_empty_jets = " << n_empty_jets
+           << endl;
+      }
+      if (bge_ptr != 0) delete bge_ptr;
     }
 #endif
   } // try
-  catch (Error fjerr) {
+  catch (Error &fjerr) {
     cout << "Caught fastjet error, exiting gracefully" << endl;
     exit(0);
   }
@@ -860,7 +934,7 @@ int main (int argc, char ** argv) {
   }
   // close any file that we've opened
   if (istr != &cin) delete istr;
-  } // jet_defs
+  } // 
 
 }
 
@@ -883,14 +957,14 @@ void print_jets(const vector<PseudoJet> & jets_in, bool show_constituents) {
     jets = sorted_by_E(jets_in);
     for (unsigned int j = 0; j < jets.size(); j++) {
       printf("%5u %15.8f %15.8f %15.8f %15.8f\n",
-	     j,jets[j].px(),jets[j].py(),jets[j].pz(),jets[j].E());
+             j,jets[j].px(),jets[j].py(),jets[j].pz(),jets[j].E());
       if (show_constituents) {
-	vector<PseudoJet> const_jets = jets[j].constituents();
-	for (unsigned int k = 0; k < const_jets.size(); k++) {
-	  printf("        jet%03u %15.8f %15.8f %15.8f %15.8f\n",j,const_jets[k].px(),
-		 const_jets[k].py(),const_jets[k].pz(),const_jets[k].E());
-	}
-	cout << "\n\n";
+        vector<PseudoJet> const_jets = jets[j].constituents();
+        for (unsigned int k = 0; k < const_jets.size(); k++) {
+          printf("        jet%03u %15.8f %15.8f %15.8f %15.8f\n",j,const_jets[k].px(),
+                 const_jets[k].py(),const_jets[k].pz(),const_jets[k].E());
+        }
+        cout << "\n\n";
     }
 
     }
@@ -898,22 +972,22 @@ void print_jets(const vector<PseudoJet> & jets_in, bool show_constituents) {
     jets = sorted_by_pt(jets_in);
     for (unsigned int j = 0; j < jets.size(); j++) {
       printf("%5u %15.8f %15.8f %15.8f",
-	     j,jets[j].rap(),jets[j].phi(),jets[j].perp());
+             j,jets[j].rap(),jets[j].phi(),jets[j].perp());
       // also print out the scalar area and the perp component of the
       // 4-vector (just enough to check a reasonable 4-vector?)
 #ifndef __FJCORE__
       if (do_areas) printf(" %15.8f %15.8f", jets[j].area(),
-			                     jets[j].area_4vector().perp());
+                                             jets[j].area_4vector().perp());
       cout << "\n";
 #endif
 
       if (show_constituents) {
-	vector<PseudoJet> const_jets = jets[j].constituents();
-	for (unsigned int k = 0; k < const_jets.size(); k++) {
-	  printf("        jet%03u %15.8f %15.8f %15.8f %5d\n",j,const_jets[k].rap(),
-		 const_jets[k].phi(),sqrt(const_jets[k].kt2()), const_jets[k].cluster_hist_index());
-	}
-	cout << "\n\n";
+        vector<PseudoJet> const_jets = jets[j].constituents();
+        for (unsigned int k = 0; k < const_jets.size(); k++) {
+          printf("        jet%03u %15.8f %15.8f %15.8f %5d\n",j,const_jets[k].rap(),
+                 const_jets[k].phi(),sqrt(const_jets[k].kt2()), const_jets[k].cluster_hist_index());
+        }
+        cout << "\n\n";
       }
     }
   }
@@ -940,7 +1014,7 @@ void print_jets_and_sub (const vector<PseudoJet> & jets, double dcut) {
   // label the columns
   printf("Printing jets and their subjets with subdcut = %10.5f\n",dcut);
   printf("%5s %15s %15s %15s %15s\n","jet #", "rapidity", 
-	 "phi", "pt", "n constituents");
+         "phi", "pt", "n constituents");
 
   // the kind of subjet finding used to test consistency among them
   SubType sub_type = subtype_internal;
@@ -1001,6 +1075,45 @@ void print_jets_and_sub (const vector<PseudoJet> & jets, double dcut) {
 
 }
 
+/// if abs(x)<precision/2, return 0
+double make_safe_zero_truncation(double x, double precision){
+  return std::abs(x)<0.5*precision ? 0.0 : x;
+}
+
+#ifndef __FJCORE__
+void print_jets_bkgd(const vector<PseudoJet> &jets,
+                     const vector<PseudoJet> &subtracted_jets,
+                     BackgroundEstimatorBase * bge_ptr,
+                     bool do_subtractor){
+  printf("Printing jets, background information");
+  if (do_subtractor)
+    printf(" and subtracted jets\n");
+  printf("%5s %15s %15s %15s %15s %15s %15s %15s %15s\n","jet #",
+         "rapidity", "phi", "pt", "pt^2+m^2",
+         "rho", "rho_m", "sigma", "sigma_m");
+  if (do_subtractor)
+    printf("%5s %15s %15s %15s %15s %15ss\n","jet #",
+           "rapidity", "phi", "pt", "sqrt(pt^2+m^2)", "area");
+
+  for (unsigned i = 0; i < jets.size(); i++) {
+    const PseudoJet & jet = jets[i];
+    BackgroundEstimate estimate = bge_ptr->estimate(jet);
+    // Note that the values of rho_m sometimes comes out as +- a very
+    // small number and the format can produce either 0.00000000 or
+    // -0.00000000. The call to "make_safe_zero_truncation" makes sure it is
+    // printed wo the - sign in each case
+    printf("%5u %15.8f %15.8f %15.8f %15.8f %15.8f %15.8f %15.8f %15.8f\n", i,
+           jet.rap(), jet.phi(), jet.perp(), jet.mt(),
+           estimate.rho(), make_safe_zero_truncation(estimate.rho_m(),1e-8),
+           estimate.sigma(), estimate.sigma_m());
+    if (do_subtractor) {
+      const PseudoJet & subjet = subtracted_jets[i];
+      printf("%5u %15.8f %15.8f %15.8f %15.8f %15.8f\n", i,
+             subjet.rap(), subjet.phi(), subjet.perp(), subjet.mt(), jet.area());
+    }
+  }
+}
+#endif// __FJCORE__
 
 //----------------------------------------------------------------------
 void signal_failed_comparison(int iev, 

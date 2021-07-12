@@ -2,9 +2,9 @@
 #define __FASTJET_SELECTOR_HH__
 
 //FJSTARTHEADER
-// $Id: Selector.hh 4442 2020-05-05 07:50:11Z soyez $
+// $Id$
 //
-// Copyright (c) 2009-2020, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2009-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.

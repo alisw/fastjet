@@ -68,11 +68,13 @@ python_PYTHON = fastjet.py
 pyexec_LTLIBRARIES = _fastjet.la
 _fastjet_la_LIBTOOLFLAGS = --silent
 _fastjet_la_SOURCES = swig_wrap.cpp
-_fastjet_la_CPPFLAGS = $(PYTHON_INCLUDE) $(AM_CXXFLAGS) $(CGAL_CPPFLAGS) -I../include -I$(top_srcdir)/include -I$(top_srcdir)/tools -DSWIG
+_fastjet_la_CPPFLAGS = $(PYTHON_INCLUDE) $(AM_CXXFLAGS) $(CGAL_CPPFLAGS) -I../include -I$(top_srcdir)/include -I$(top_srcdir)/tools -DSWIG -DSWIG_TYPE_TABLE=fastjet
 _fastjet_la_LDFLAGS = -module
 _fastjet_la_LIBADD = ../src/libfastjet.la ../tools/libfastjettools.la $(CGAL_LIBS)
 
 # include the interface file for completeness
+pyinterfacedir=$(datadir)/fastjet/pyinterface
+pyinterface_DATA=$(SWIGINTERFACES) FastJetPythonExtensions.hh
 
 # this gets evaluated before install-exec
 # we use that to silence litool
@@ -93,7 +95,7 @@ install-exec-hook:
 
 
 #----------------------------------------------------------------------
-# If we were to let the end-user run waig, then we should have the following:
+# If we were to let the end-user run swig, then we should have the following:
 
 #BUILT_SOURCES = $(srcdir)/swig_wrap.cpp
 #SWIG_SOURCES = fastjet.i

@@ -22,8 +22,8 @@
 // along with this program; if not, write to the Free Software               //
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA //
 //                                                                           //
-// $Revision:: 390                                                          $//
-// $Date:: 2016-03-03 11:06:52 +0100 (Thu, 03 Mar 2016)                     $//
+// $Revision::                                                              $//
+// $Date::                                                                  $//
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <siscone/siscone_error.h>

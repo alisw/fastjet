@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------
 
 //STARTHEADER
-// $Id: 07-subtraction.cc 4354 2018-04-22 07:12:37Z salam $
+// $Id$
 //
 // Copyright (c) 2005-2018, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
@@ -205,12 +205,11 @@ int main(){
   cout << "Background estimation:" << endl;
   cout << "  " << bkgd_estimator.description() << endl << endl;;
   cout << "  Giving, for the full event" << endl;
-  cout << "    rho     = " << bkgd_estimator.rho()   << endl;
-  cout << "    sigma   = " << bkgd_estimator.sigma() << endl; 
-#if FASTJET_VERSION_NUMBER >= 30100
-  cout << "    rho_m   = " << bkgd_estimator.rho_m()   << endl;
-  cout << "    sigma_m = " << bkgd_estimator.sigma_m() << endl; 
-#endif
+  BackgroundEstimate bkgd_estimate = bkgd_estimator.estimate();
+  cout << "    rho     = " << bkgd_estimate.rho()   << endl;
+  cout << "    sigma   = " << bkgd_estimate.sigma() << endl; 
+  cout << "    rho_m   = " << bkgd_estimate.rho_m()   << endl;
+  cout << "    sigma_m = " << bkgd_estimate.sigma_m() << endl; 
   cout << endl;
 
   cout << "Jets above " << ptmin << " GeV in the hard event (" << hard_event.size() << " particles)" << endl;
