@@ -2,9 +2,9 @@
 #define __FASTJET_CLUSTERSEQUENCE_HH__
 
 //FJSTARTHEADER
-// $Id: ClusterSequence.hh 4442 2020-05-05 07:50:11Z soyez $
+// $Id$
 //
-// Copyright (c) 2005-2020, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -47,7 +47,7 @@
 #include "fastjet/LimitedWarning.hh"
 #include "fastjet/FunctionOfPseudoJet.hh"
 #include "fastjet/ClusterSequenceStructure.hh"
-
+#include "fastjet/internal/thread_safety_helpers.hh"  // helpers to write code w&wo thread-safety
 #include "fastjet/internal/deprecated.hh"
 
 FASTJET_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
@@ -299,8 +299,13 @@ class ClusterSequence {
   /// when unused
   bool will_delete_self_when_unused() const {return _deletes_self_when_unused;}
 
+//std::shared_ptr: #ifdef FASTJET_HAVE_THREAD_SAFETY
+//std::shared_ptr:   /// signals that a jet will no longer use the current CS (internal use only)
+//std::shared_ptr:   void release_pseudojet(PseudoJet &jet) const;
+//std::shared_ptr: #else
   /// tell the ClusterSequence it's about to be self deleted (internal use only)
   void signal_imminent_self_deletion() const;
+//std::shared_ptr: #endif
 
   /// returns the scale associated with a jet as required for this
   /// clustering algorithm (kt^2 for the kt-algorithm, 1 for the
@@ -368,8 +373,8 @@ class ClusterSequence {
   /// of auto_ptr in C++11
 #ifndef SWIG
 #ifdef FASTJET_HAVE_AUTO_PTR_INTERFACE
-  FASTJET_DEPRECATED_MSG("Please use ClusterSequence::plugin_associate_extras(Extras * extras_in)) instead")
-  inline void plugin_associate_extras(std::auto_ptr<Extras> extras_in){
+  FASTJET_DEPRECATED_MSG("Please use ClusterSequence::plugin_associate_extras(Extras * extras_in)) instead",
+  inline void plugin_associate_extras(std::auto_ptr<Extras> extras_in)){
     _extras.reset(extras_in.release());
   }
 #endif
@@ -574,11 +579,14 @@ public:
   static std::ostream * fastjet_banner_stream() {return _fastjet_banner_ostr;}
 
 private:
+  
   /// \cond internal_doc
-
   /// contains the actual stream to use for banners 
+#ifdef FASTJET_HAVE_LIMITED_THREAD_SAFETY
+  static std::atomic<std::ostream*> _fastjet_banner_ostr;
+#else
   static std::ostream * _fastjet_banner_ostr;
-
+#endif // FASTJET_HAVE_LIMITED_THREAD_SAFETY
   /// \endcond
 
 protected:
@@ -711,7 +719,11 @@ protected:
   /// object referring to it disappears. It is mutable so as to ensure
   /// that signal_imminent_self_deletion() [const] can make relevant
   /// changes.
+#ifdef FASTJET_HAVE_THREAD_SAFETY
+  mutable std::atomic<bool> _deletes_self_when_unused;
+#else
   mutable bool _deletes_self_when_unused;
+#endif
 
  private:
 
@@ -767,7 +779,7 @@ protected:
 
 
   /// will be set by default to be true for the first run
-  static bool _first_time;
+  static thread_safety_helpers::FirstTimeTrue _first_time;
 
   /// manage warnings related to exclusive jets access
   static LimitedWarning _exclusive_warnings;

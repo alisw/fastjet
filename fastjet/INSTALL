@@ -2,12 +2,17 @@
 Installation instructions for FastJet
 ------------------------------------- 
 
-FastJet can be configured, built and installed using the standard sequence
+These instructions for installation from an untarred FastJet release
+tarball. For additional steps needed from a git clone, see below.
+
+FastJet can be configured, built and installed using the standard
+sequence
 
 % ./configure [options]
 % make
 % make check   (optional)
 % make install
+
 
 The full list of configuration options can be obtained with ./configure --help. 
 Some useful ones include:
@@ -105,31 +110,44 @@ If, instead you want to disable the  option, you can use --enable-foo=no
 or --disable-foo.
 
 
-Note for SVN users -- developers only
+Note for git users
 ------------------
-If you download a subversion copy of FastJet (currently restricted to
-the developers), you first need to generate all configuration files. 
-This is done by using
 
-% autoreconf --install
-% ./configure [configure option]
+If you clone FastJet from the git repository, you first need to set up
+the SISCone submodule 
+
+% git submodule init
+% git submodule update
+
+Then you should generate all configuration files. This is done using
+
+% ./autogen.sh [configure options]
 
 or, alternatively,
 
-% ./autogen.sh [configure option]
+% autoreconf --install
+% cd plugins/SISCone/siscone; autoreconf --install; cd ../../..
+% ./configure [configure options]
 
 Remarks: 
-- a version of libtool >= 1.5 is needed. On Mac OSX the GNU libtool
-  should be installed.
+
+- a version of libtool >= 1.5 is needed. On older version of Mac OSX the
+  GNU libtool should be installed.
 - adding '--force' to the list of autoreconf arguments will overwrite
   the INSTALL file with the default version
 - using the autogen.sh script automatically runs ./configure 
   (with the specified options)
-
+- on some systems, config.h from git (and a corresponding file in the SISCone
+  release) may get overwritten. It is usually safe to restore the
+  original git versions with "git checkout config.h". 
+   
 
 ======================================================================
 OLD (NON-AUTOTOOLS) BUILD SYSTEM
 ======================================================================
+
+These instructions are obsolete.
+
 ------------
 Quick method
 ------------

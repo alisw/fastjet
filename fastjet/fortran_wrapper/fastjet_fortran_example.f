@@ -10,7 +10,7 @@ C     mileage may vary...
 C     
 C     To use, type: ./fastjet_fortran_example < ../example/data/single-event.dat
 C     
-C     $Id: fastjet_fortran_example.f 4006 2015-10-05 21:39:13Z cacciari $
+C     $Id$
 C     
       program fastjet_fortran_example
       implicit none

@@ -1,7 +1,7 @@
 //FJSTARTHEADER
-// $Id: PxConePlugin.cc 4442 2020-05-05 07:50:11Z soyez $
+// $Id$
 //
-// Copyright (c) 2005-2020, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -41,7 +41,7 @@ FASTJET_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
 
 using namespace std;
 
-bool PxConePlugin::_first_time = true;
+thread_safety_helpers::FirstTimeTrue PxConePlugin::_first_time;
 
 string PxConePlugin::description () const {
   ostringstream desc;
@@ -50,7 +50,8 @@ string PxConePlugin::description () const {
        << "cone_radius = "        << cone_radius        () << ", "
        << "min_jet_energy = "     << min_jet_energy     () << ", "
        << "overlap_threshold  = " << overlap_threshold  () << ", "
-       << "E_scheme_jets  = "     << E_scheme_jets      () 
+       << "E_scheme_jets  = "     << E_scheme_jets      () << ", "
+       << "mode (1=e+e-, 2=hh) = " << _mode
        << " (NB: non-standard version of PxCone, containing small bug fixes by Gavin Salam)";
 
   return desc.str();
@@ -62,7 +63,7 @@ void PxConePlugin::run_clustering(ClusterSequence & clust_seq) const {
   //_print_banner(clust_seq.fastjet_banner_stream());
  
   // only have hh mode
-  int mode = 2;
+  //int mode = 2;
 
   int    ntrak = clust_seq.jets().size(), itkdm = 4;
   double *ptrak = new double[ntrak*4+1];
@@ -83,7 +84,7 @@ void PxConePlugin::run_clustering(ClusterSequence & clust_seq) const {
 
   // run pxcone
   pxcone(
-    mode   ,    // 1=>e+e-, 2=>hadron-hadron
+    _mode  ,    // 1=>e+e-, 2=>hadron-hadron
     ntrak  ,    // Number of particles
     itkdm  ,    // First dimension of PTRAK array: 
     ptrak  ,    // Array of particle 4-momenta (Px,Py,Pz,E)
@@ -167,8 +168,7 @@ void PxConePlugin::run_clustering(ClusterSequence & clust_seq) const {
 
 // print a banner for reference to the 3rd-party code
 void PxConePlugin::_print_banner(ostream *ostr) const{
-  if (! _first_time) return;
-  _first_time=false;
+  if (! _first_time()) return;
 
   // make sure the user has not set the banner stream to NULL
   if (!ostr) return;  

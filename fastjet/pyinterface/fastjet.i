@@ -74,7 +74,7 @@ Example
 #include "fastjet/internal/BasicRandom.hh"
 #include "fastjet/SharedPtr.hh"
 #include "fastjet/LimitedWarning.hh"
-#include "fastjet/Error.hh"
+  //#include "fastjet/Error.hh"
 #include "fastjet/PseudoJetStructureBase.hh"
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/FunctionOfPseudoJet.hh"
@@ -102,22 +102,76 @@ Example
 #include "FastJetPythonExtensions.hh"
   %}
 
-// code to ensure that FJ C++ exceptions are passed on to Python
-// cf https://stackoverflow.com/questions/15006048/dynamically-rethrowing-self-defined-c-exceptions-as-python-exceptions-using-sw
+
+%template(vectorPJ) std::vector<fastjet::PseudoJet>;
+
+//----------------------------------------------------------------------
+// handle exceptoins by introducing a FastJetError python class
+// derived from python's Exception class
+//
+// Thanks to Patrick Komiske for the fix
+//----------------------------------------------------------------------
+
+// define as macro for use in contrib files
+%define FASTJET_ERRORS_AS_PYTHON_EXCEPTIONS(module)
+%{
+// Python class for representing errors from FastJet
+static PyObject * FastJetError_;
+%}
+
+// this gets placed in the SWIG_init function
+%init %{
+  fastjet::Error::set_print_errors(false);
+  unsigned int mlen = strlen(`module`);
+  char * msg = (char*) calloc(mlen+15, sizeof(char));
+  strcpy(msg, `module`);
+  strcat(msg, ".FastJetError");
+  FastJetError_ = PyErr_NewException(msg, NULL, NULL);
+  Py_INCREF(FastJetError_);
+  if (PyModule_AddObject(m, "FastJetError", FastJetError_) < 0) {
+    Py_DECREF(m);
+    Py_DECREF(FastJetError_);
+    //return NULL;
+  }
+%}
+%enddef
+
+// include FastJetError in python module
+%pythoncode {
+  from _fastjet import FastJetError
+}
+
+FASTJET_ERRORS_AS_PYTHON_EXCEPTIONS(fastjet)
+
+// check for fastjet errors after each action
 %exception {
-  try {
-    $action
-      } catch (fastjet::Error &_e) {
-    SWIG_Python_Raise(SWIG_NewPointerObj(
-        (new fastjet::Error(static_cast<const fastjet::Error& >(_e))),  
-            SWIGTYPE_p_fastjet__Error,SWIG_POINTER_OWN),
-        "fastjet::Error", SWIGTYPE_p_fastjet__Error); 
+  try { $action }
+  catch (fastjet::Error & e) {
+    PyErr_SetString(FastJetError_, e.message().c_str());
     SWIG_fail;
-  } 
+  }
 }
 
 
-%template(vectorPJ) std::vector<fastjet::PseudoJet>;
+// // old code
+// //
+// // code to ensure that FJ C++ exceptions are passed on to Python
+// // cf https://stackoverflow.com/questions/15006048/dynamically-rethrowing-self-defined-c-exceptions-as-python-exceptions-using-sw
+// %exception {
+//   try { $action }
+//   catch (fastjet::Error &_e) {
+//     SWIG_Python_Raise(SWIG_NewPointerObj(
+//         (new fastjet::Error(static_cast<const fastjet::Error& >(_e))),  
+//             SWIGTYPE_p_fastjet__Error,SWIG_POINTER_OWN),
+//         "fastjet::Error", SWIGTYPE_p_fastjet__Error); 
+//     SWIG_fail;
+//   } 
+// }
+
+
+//----------------------------------------------------------------------
+// a list of FastJet includes
+//----------------------------------------------------------------------
 
 %include "fastjet/config_auto.h"
 %include "fastjet/config.h"
@@ -154,6 +208,11 @@ Example
 %include "fastjet/ClusterSequenceArea.hh"
 %include "FastJetPythonExtensions.hh"
 
+//----------------------------------------------------------------------
+// extra bits and pieces to make a series of specialised things
+// directly available in Python
+//----------------------------------------------------------------------
+
 namespace fastjet {
 
 // the templated ctors must be specialised for PseudoJet
@@ -171,7 +230,7 @@ namespace fastjet {
 %enddef
 
 
-
+// class descriptions (__str__)
 FASTJET_SWIG_ADD_STR(JetDefinition)  
 FASTJET_SWIG_ADD_STR(AreaDefinition)  
 FASTJET_SWIG_ADD_STR(Selector)
@@ -179,6 +238,7 @@ FASTJET_SWIG_ADD_STR(GhostedAreaSpec)
 FASTJET_SWIG_ADD_STR(FunctionOfPseudoJet)
 FASTJET_SWIG_ADD_STR(RectangularGrid)
 
+// templated ctors
 FASTJET_TEMPLATED_CTOR_FOR_PSEUDOJET(ClusterSequence)
 FASTJET_TEMPLATED_CTOR_FOR_PSEUDOJET(ClusterSequenceActiveAreaExplicitGhosts)
 FASTJET_TEMPLATED_CTOR_FOR_PSEUDOJET(ClusterSequenceActiveArea)
@@ -294,6 +354,7 @@ namespace fastjet{
 }
 %enddef
   
+// class descriptions (__str__) for the tools
 FASTJET_SWIG_ADD_STR(Boost)
 FASTJET_SWIG_ADD_STR(Unboost)
 FASTJET_SWIG_ADD_STR(Recluster)

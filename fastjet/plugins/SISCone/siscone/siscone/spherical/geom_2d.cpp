@@ -22,8 +22,8 @@
 // along with this program; if not, write to the Free Software               //
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA //
 //                                                                           //
-// $Revision:: 378                                                          $//
-// $Date:: 2016-02-24 15:10:38 +0100 (Wed, 24 Feb 2016)                     $//
+// $Revision::                                                              $//
+// $Date::                                                                  $//
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "geom_2d.h"
