@@ -25,8 +25,8 @@
 // along with this program; if not, write to the Free Software               //
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA //
 //                                                                           //
-// $Revision:: 324                                                          $//
-// $Date:: 2011-11-16 12:10:27 +0100 (Wed, 16 Nov 2011)                     $//
+// $Revision::                                                              $//
+// $Date::                                                                  $//
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>

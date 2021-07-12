@@ -1,7 +1,7 @@
 //FJSTARTHEADER
-// $Id: PxConePlugin.hh 4442 2020-05-05 07:50:11Z soyez $
+// $Id$
 //
-// Copyright (c) 2005-2020, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -32,6 +32,7 @@
 #define __PXCONEPLUGIN_HH__
 
 #include "fastjet/JetDefinition.hh"
+#include "fastjet/internal/thread_safety_helpers.hh"  // helpers to write transparent code w&wo C++11 features
 
 // questionable whether this should be in fastjet namespace or not...
 
@@ -89,14 +90,19 @@ public:
   ///     momentum sum for the jets is carried out by direct
   ///     four-vector addition instead of p-scheme recombination.
   ///
-  PxConePlugin (double  cone_radius_in      , 
-		double  min_jet_energy_in = 5.0  , 
+  ///   - mode: set to 1 for the e+e- version
+  ///           set to 2 for the hadron-hadron version (the default)
+  ///
+  PxConePlugin (double  cone_radius_in, 
+		double  min_jet_energy_in = 5.0, 
 		double  overlap_threshold_in = 0.5,
-                bool    E_scheme_jets_in = false) : 
+                bool    E_scheme_jets_in = false,
+                int     mode = 2) : 
     _cone_radius        (cone_radius_in      ),
     _min_jet_energy     (min_jet_energy_in   ),
     _overlap_threshold  (overlap_threshold_in),
-    _E_scheme_jets      (E_scheme_jets_in    ) {}
+    _E_scheme_jets      (E_scheme_jets_in    ),
+    _mode               (mode                ){}
 
 
   // some functions to return info about parameters ----------------
@@ -118,6 +124,7 @@ public:
   /// unaffected.
   bool E_scheme_jets()         const {return _E_scheme_jets      ;}
 
+  int mode()                   const {return _mode               ;}
 
   // the things that are required by base class
   virtual std::string description () const;
@@ -133,7 +140,8 @@ private:
 
   bool _E_scheme_jets;
 
-  static bool _first_time;
+  static thread_safety_helpers::FirstTimeTrue _first_time;
+  int _mode;  // 1 = e+e-, 2 = hh (default)
 
   /// print a banner for reference to the 3rd-party code
   void _print_banner(std::ostream *ostr) const;

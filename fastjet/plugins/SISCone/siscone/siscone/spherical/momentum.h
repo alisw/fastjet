@@ -23,8 +23,8 @@
 // along with this program; if not, write to the Free Software               //
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA //
 //                                                                           //
-// $Revision:: 256                                                          $//
-// $Date:: 2008-07-14 13:52:16 +0200 (Mon, 14 Jul 2008)                     $//
+// $Revision::                                                              $//
+// $Date::                                                                  $//
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SPH_VECTOR_H__

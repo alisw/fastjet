@@ -67,6 +67,9 @@
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
+/* defined if limited thread-safety has been enabled */
+#undef HAVE_LIMITED_THREAD_SAFETY
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -93,6 +96,9 @@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
+
+/* defined if thread-safety has been enabled */
+#undef HAVE_THREAD_SAFETY
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H

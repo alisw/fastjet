@@ -64,8 +64,8 @@ def print_jets(jets):
 
     for ijet in range(len(jets)):
         jet = jets[ijet]
-        print("{0:5d} {1:10.3f} {2:10.4f} {3:10.4f} {3:10.4f}".format(
-            ijet, jet.pt(), jet.rap(), jet.phi(), jet.area))
+        print("{0:5d} {1:10.3f} {2:10.4f} {3:10.4f} {4:10.4f}".format(
+            ijet, jet.pt(), jet.rap(), jet.phi(), jet.area()))
     
 
 if __name__ == '__main__':
