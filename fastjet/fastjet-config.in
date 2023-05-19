@@ -14,7 +14,8 @@ exec_prefix=@exec_prefix@
 installationdir=@prefix@
 libdir=@libdir@
 includedir=@includedir@
-
+PYTHON_EXEC_PREFIX=@PYTHON_EXEC_PREFIX@
+PYTHON_PREFIX=@PYTHON_PREFIX@
 
 # print a usage message and exit
 # exit code passed as argument:

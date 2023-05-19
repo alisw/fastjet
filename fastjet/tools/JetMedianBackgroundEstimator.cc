@@ -1,7 +1,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -289,7 +289,7 @@ BackgroundEstimate JetMedianBackgroundEstimator::estimate(const PseudoJet &jet) 
     local_estimate = _compute(jet);
   } else {
     // otherwise, we're in a situation where things can be cached once
-    // and for all and then the cache can be used frely
+    // and for all and then the cache can be used freely
     if (!_cache_available) _compute_and_cache_no_overwrite();
     local_estimate = _cached_estimate;
   }  
@@ -720,7 +720,7 @@ BackgroundEstimate JetMedianBackgroundEstimator::_compute(const PseudoJet &jet) 
   
   // process and store the results (_rho was already stored above)
   local_estimate.set_mean_area(total_area / total_njets);
-  local_estimate.set_sigma(stand_dev * sqrt(local_estimate.mean_area()));
+  local_estimate.set_sigma(stand_dev * sqrt( max(0.0, local_estimate.mean_area()) ));
 
   // compute the rho_m part now
   if (do_rho_m){
@@ -728,7 +728,7 @@ BackgroundEstimate JetMedianBackgroundEstimator::_compute(const PseudoJet &jet) 
                        rho_tmp, stand_dev, 
 		       _provide_fj2_sigma);
     local_estimate.set_rho_m(rho_tmp);
-    local_estimate.set_sigma_m(stand_dev * sqrt(local_estimate.mean_area()));
+    local_estimate.set_sigma_m(stand_dev * sqrt( max(0.0, local_estimate.mean_area()) ));
   }
 
   return local_estimate;

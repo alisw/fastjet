@@ -1,4 +1,247 @@
 ========== CHANGELOG FILE FOR FastJet =================================
+2023-05-02  FastJet team <fastjet@projects.hepforge.org>
+
+	Release of FastJet fastjet-3.4.1
+
+2023-05-02  Gregory Soyez  <soyez@fastjet.fr>
+
+	* almost all cc and hh files:
+	updated the header to include the correct years in the copyright
+
+2023-05-02  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	set the release date for v3.4.1 to May the 2nd 2023
+
+2023-04-25 Tue  <gavin.salam@physics.ox.ac.uk>
+
+	* NEWS:
+	drafting news items for 3.4.1 release
+
+2023-02-18 Sat  <gavin.salam@physics.ox.ac.uk>
+
+	* scripts/mksnapshot.sh:
+	updated script to use git rather than svn
+
+	* autogen.sh:
+	switched over to bash explicitly, and addressed issues
+	with check for glibtool on Mac OS. 
+
+2023-02-16  Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* testsuite/mkcxx.pl: *ADDED*
+	* testsuite/mkmk:
+	added the mkcxx.pl script used by mkmk and adapted
+	mkmk to use the local version (intended to ease
+	testing on vanilla systems)
+
+2023-02-16  Gregory Soyez  <soyez@fastjet.fr> + Gavin
+
+	* src/PseudoJet.cc (PseudoJet::_ensure_valid_rap_phi):
+	Changed the part that waits until the calculation is done to a
+	simple loop. Also, set the computation/wait mechanism to use
+	memory_order_releease/memory_order_acquire
+
+2023-02-15 Gavin Salam  <gavin.salam@physics.ox.ac.uk> + Gregory
+
+
+	* src/PseudoJet.cc:
+	replaced use of _init_status = Init_Done with _init_status.store(Init_Done)
+	(though we expect it to be equivalent)
+
+	* testsuite/README:
+	fixed a few details
+
+	* testsuite/TestThreadsBase.hh:
+	* testsuite/thread_safety_tests.cc:
+	trying to get repeated tests of reset momentum and assignment,
+	to help increase likelihood of catching thread safety issues, 
+	if any remain (so far it passes).
+
+	* testsuite/README:
+	added a note about the thread safety tests and fixed some typos.
+
+2023-02-14  Gregory Soyez  <soyez@fastjet.fr>
+
+	* testsuite/TestThreadsBase.hh:
+	* testsuite/thread_safety_tests.cc:
+	* testsuite/TestPseudoJet.hh:
+	added tests of thread safety for the copy and reset_momentum of
+	PseudoJet
+
+	* include/fastjet/PseudoJet.hh:
+	removed line wrongly left in during earlier tests
+
+2023-02-14 Tue  <gavin.salam@physics.ox.ac.uk> with Gregory
+
+    * include/fastjet/PseudoJet.hh:
+    * src/PseudoJet.cc:
+
+	attempted fix of a severe thread safety issue in
+	PseudoJet::reset_momentum(const PseudoJet &) and
+	PseudoJet::operator=(const PseudoJet &) to do with caching of
+	rapidity and phi (issue brough up by Ludovic Scyboz). Further tests
+	still to be written.
+
+
+2023-02-14  Gregory Soyez  <soyez@fastjet.fr>
+
+	* include/fastjet/internal/ClusterSequence_N2.icc:
+	* src/LazyTiling9.cc:
+	* src/LazyTiling9Alt.cc:
+	* src/LazyTiling25.cc:
+	* src/ClusterSequence_TiledN2.cc:
+
+	got rid of "history_location" (a remnant of an archaic treatment
+	of recombination histories) which was no longer used.  This fixes
+	an issue reported by Torbjorn Sjostrand (and Philip Ilten) of
+	compilation warnings with clang15.
+
+2022-12-08  Gavin SALAM  <gavin.salam@cern.ch>
+
+	* regression-tests/nightly-check.pl: 
+	commented out very old version of icpc in tests (default in path, 
+	was 10.1.018). Increased number of events in the v14 from 10 to 1k
+
+2022-12-08 Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* src/ClusterSequenceAreaBase.cc:
+	* tools/BackgroundEstimatorBase.cc:
+	* tools/JetMedianBackgroundEstimator.cc:
+
+	in various places, replaced sqrt(mean_area) -> sqrt(max(0.0, mean_area))
+	so that when the mean area is negative we don't get NaN for the 
+	sigma result (which causes an FPE for ATLAS, as reported by PAD, 
+	and documented as our 2022-11-FPE-negative-sqrt-density-sigma issue).
+
+	Note, this is not a proper fix for the underlying physical problem
+	in that issue, which is that in some small fraction of events, when
+	the clustering inputs are restricted to be within the area selection
+	region, Voronoi areas extend well beyond the area selection region,
+	which can lead to unphysical results for rho. One could even argue that
+	the FPE was useful, because it signalled the existence of the problem.
+
+	Also fixed typos in comments. 
+
+2022-11-01  Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* pyinterface/fastjet.i:
+	Accepting merge request from Chris Papageorgakis
+	<chrispap95@gmail.com>, which fixes an issue with an import
+	string
+
+2022-09-27 Tue  <gavin.salam@physics.ox.ac.uk> + Gregory
+
+	* configure.ac:
+	replaced default auto_ptr interface from enabled to disabled,
+	reflecting trouble with modern compilers that no longer
+	have auto_ptr by default (report from Samiur Mir). 
+	Enable at configure-time with --enable-auto-ptr
+
+2022-07-23  Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* fastjet-config.in:
+	fixed issue where `fastjet-config --pythonpath` was giving incorrect
+	path for non-standard install locations.
+
+2022-06-10 Fri  <gavin.salam@physics.ox.ac.uk>
+
+	* testsuite/thread_safety_tests.cc:
+	removed old unused testing code (superseded by the contents of TestThreadsbase.hh)
+
+2021-11-21 Sun  <gavin.salam@physics.ox.ac.uk>
+
+	* include/fastjet/ClusterSequence.hh:
+
+	rearranged comments for history_element, so that doxygen output
+	comes out OK (comments were being associated with wrong variable).
+
+
+2021-11-15 Mon  <gavin.salam@physics.ox.ac.uk>
+
+	* include/fastjet/JetDefinition.hh:
+	added new strategy N2PlainEEAccurate, intended to work for eekt and ee_genkt
+
+	* include/fastjet/ClusterSequence.hh:
+	* src/ClusterSequence.cc:
+	* src/ClusterSequence_N2.cc:
+
+	Implemented the switch to use of more accurate code for eekt and ee_genkt
+	when the requested strategy is N2PlainEEAccurate. This involves a
+	the use of the cross product for angular-distance
+	calculations when the angle is smaller than (roughly)
+	epsilon**1/4, where epsilon is machine precision. It has a
+	timing penalty of about 15% slower than the default strategy (see
+	below), but is considerably more accurate for angles close to, or
+	smaller than, sqrt(epsilon), where the normal method breaks down.
+	This more accurate strategy breaks down for angles ~ epsilon. 
+	
+	* testsuite/TestEEDotCross.hh:
+
+	updated to use test only the distance calculation with
+	N2PlainEEAccurate (with the default strategy it will give errors).
+
+	* regression-tests/test-all-algs.pl:
+	For the native e+e- algorithms, it now runs the standard and the
+	more accurate strategies. Try it, e.g., with 
+
+	  ./regression-tests/test-all-algs.pl -alg eekt
+
+	NB: the more accurate one doesn't really get seriously tested here,
+	because it kicks in only for very small angles, which tend not to
+	be present in the event files used for the tests. The testsuite
+	tests are more indicative here.
+
+	* Timing summary: (machine in a different state relative to 2021-09-16)
+	(MacOS, clang 12.0.0, 2.3 GHz 8-Core Intel Core i9)
+
+	The timings with the original (default) strategy are as follows:
+	> ./fastjet_timing_plugins -eegenkt 0 -repeat 100000 < data/single-ee-event.dat
+    2.17,2.10,2.16,2.20 s -> average = 2.16 s
+
+	With the new N2PlainEEAccurate strategy (code 31), the speed penalty is about 15%: 	
+	> ./fastjet_timing_plugins -eegenkt 0 -repeat 100000 -strategy 31 < data/single-ee-event.dat
+	2.53,2.54,2.50,2.49 s -> average = 2.52 s
+
+	NB: also tested a version where the cross-product calculation is
+	used for angles < pi/2. This is somewhat more accurate for angles ~
+	epsilon**1/4 (relative accuracy of epsilon**3/4 instead of
+	epsilon**1/2?), but the speed cost is closer to a factor of two than
+	15%. (NB default strategy timings somewhat different -- at this
+	level they are sensitive to machine state)
+
+	> ./fastjet_timing_plugins -eegenkt 0 -repeat 100000 < data/single-ee-event.dat
+    2.06,2.11,2.06,2.11 -> average = 2.085
+	> ./fastjet_timing_plugins -eegenkt 0 -repeat 100000 -strategy 31 < data/single-ee-event.dat
+	4.21,4.21,4.17,4.22 -> average = 4.20
+
+2021-09-16 Thu  <gavin.salam@physics.ox.ac.uk>
+
+	* testsuite/TestEEDotCross.hh: *** ADDED ***
+	* testsuite/run_tests.cc:
+	started work on tests to be able to verify genkt small-angle dmerge
+
+	Timings prior to change for (MacOS, clang 12.0.0, 2.3 GHz 8-Core Intel Core i9)
+	./fastjet_timing_plugins -eegenkt 0 -repeat 100000 < data/single-ee-event.dat
+	2.43s, 2.46s, 2.43s, 2.35s, 2.38s, average = 2.41s
+
+	Timings after the change are 
+	2.68s, 2.70s, 2.79s, 2.83s, 2.79s, average = 2.76, i.e. 15% penalty
+
+2021-07-22 Thu  <gavin.salam@physics.ox.ac.uk>
+
+    * scripts/Makefile-fjcore.txt:
+	added note that on some systems, the fortran example needs
+	-lstdc++ rather than -lc++
+
+	* include/fastjet/ClusterSequence.hh:
+	added CS::plugin_non_const_jet(i) for plugins to be able to
+	modify properties of the input jets (e.g. user info)
+
+	* include/fastjet/PseudoJet.hh:
+	added PseudoJet::set_user_info_shared_ptr(...), to allow
+	user info to easily be transferred from one jet to another
+
 2021-06-25  FastJet team <fastjet@projects.hepforge.org>
 
 	Release of FastJet fastjet-3.4.0
@@ -1933,7 +2176,7 @@ Entries above were added while nmerging the master branch
 	make it mutable and perhaps change the name]
 	[GS: I'd be in favour of that option but struggle w the naming]
 
-	We haev also removed the thread_local for the random generator as
+	We have also removed the thread_local for the random generator as
 	it is not supported by Apple's version of clang.
 
 	* include/fastjet/internal/BasicRandom.hh:

@@ -15,13 +15,13 @@ check_script = ../utils/check.sh
 #------------------------------------------------------------------------
 # things that are specific to this contrib
 NAME=LundPlane
-SRCS=LundGenerator.cc LundWithSecondary.cc SecondaryLund.cc
-EXAMPLES=example example_secondary
-INSTALLED_HEADERS=LundGenerator.hh LundWithSecondary.hh SecondaryLund.hh LundJSON.hh
+SRCS=LundGenerator.cc LundWithSecondary.cc SecondaryLund.cc RecursiveLundEEGenerator.cc
+EXAMPLES=example example_secondary example_dpsi_collinear example_dpsi_slice
+INSTALLED_HEADERS=LundGenerator.hh LundWithSecondary.hh SecondaryLund.hh RecursiveLundEEGenerator.hh LundJSON.hh LundEEHelpers.hh
 #------------------------------------------------------------------------
 
 CXXFLAGS+= $(shell $(FASTJETCONFIG) --cxxflags)
-LDFLAGS += -lm $(shell $(FASTJETCONFIG) --libs)
+LDFLAGS += -lm $(shell $(FASTJETCONFIG) --libs) -lfastjetplugins
 
 OBJS  = $(SRCS:.cc=.o)
 EXAMPLES_SRCS  = $(EXAMPLES:=.cc)
@@ -53,7 +53,11 @@ $(EXAMPLES): % : %.o all
 # check that everything went fine
 check: examples
 	@for prog in $(EXAMPLES); do\
-	  $(check_script) $${prog} ../data/single-event.dat || exit 1; \
+	  if [ "$${prog}" = "example_dpsi_collinear" ] || [ "$${prog}" = "example_dpsi_slice" ]; then \
+	    $(check_script) $${prog} ../data/single-ee-event.dat || exit 1; \
+	  else \
+	    $(check_script) $${prog} ../data/single-event.dat || exit 1; \
+	  fi; \
 	done
 	@echo "All tests successful"
 
@@ -80,5 +84,8 @@ depend:
 LundGenerator.o: LundGenerator.hh
 LundWithSecondary.o: LundWithSecondary.hh LundGenerator.hh SecondaryLund.hh
 SecondaryLund.o: SecondaryLund.hh LundGenerator.hh
-example.o: LundGenerator.hh SecondaryLund.hh LundJSON.hh
+RecursiveLundEEGenerator.o: RecursiveLundEEGenerator.hh LundEEHelpers.hh
+example.o: LundGenerator.hh LundJSON.hh
 example_secondary.o: LundWithSecondary.hh LundGenerator.hh SecondaryLund.hh
+example_dpsi_collinear.o: RecursiveLundEEGenerator.hh LundEEHelpers.hh
+example_dpsi_slice.o: RecursiveLundEEGenerator.hh LundEEHelpers.hh

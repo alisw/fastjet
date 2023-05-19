@@ -11,9 +11,10 @@
 /// \endverbatim
 
 //----------------------------------------------------------------------
-// $Id: example_secondary.cc 1164 2018-08-23 10:06:45Z gsalam $
+// $Id: example_secondary.cc 1345 2023-03-01 08:49:41Z salam $
 //
-// Copyright (c) -, Frederic A. Dreyer, Gavin P. Salam, Gregory Soyez
+// Copyright (c) 2018-, Frederic A. Dreyer, Keith Hamilton, Alexander Karlberg,
+// Gavin P. Salam, Ludovic Scyboz, Gregory Soyez, Rob Verheyen
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet contrib.

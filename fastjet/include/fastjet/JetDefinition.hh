@@ -4,7 +4,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -123,6 +123,13 @@ enum Strategy {
   /// the automatic strategy choice that was being made in FJ 3.0
   /// (restricted to strategies that were present in FJ 3.0)
   BestFJ30     =  21, 
+  /// a variant of N2Plain strategy for native \f$e^+e^-\f$ algorithms
+  /// (eekt, ee_genkt) that uses a more accurate calculation of the
+  /// distance measure when angles between PseudoJets are smaller than
+  /// \f$\epsilon^{1/4}\f$, where \f$\epsilon\f$ is the machine
+  /// precision. It shifts the breakdown point from \f$\theta\sim
+  /// \sqrt{\epsilon}\f$ to \f$\theta \sim \epsilon\f$.
+  N2PlainEEAccurate =  31,
   /// the plugin has been used...
   plugin_strategy = 999
 };

@@ -2,7 +2,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -306,8 +306,9 @@ void ClusterSequenceAreaBase::_get_median_rho_and_sigma(
   // pt_over_areas array, because we'll often be doing subtraction of
   // -1, negating it, etc. All of these operations go crazy with unsigned ints.
   int pt_over_areas_size = pt_over_areas.size();
-  if (n_empty < -pt_over_areas_size/4.0)
+  if (n_empty < -pt_over_areas_size/4.0) {
     _warnings_empty_area.warn("ClusterSequenceAreaBase::get_median_rho_and_sigma(...): the estimated empty area is suspiciously large and negative and may lead to an over-estimation of rho. This may be due to (i) a rare statistical fluctuation or (ii) too small a range used to estimate the background properties.");
+  }
 
   for (int i = 0; i < 2; i++) {
     double nj_median_pos = 
@@ -333,7 +334,7 @@ void ClusterSequenceAreaBase::_get_median_rho_and_sigma(
   median = res[0];
   double error  = res[0] - res[1];
   mean_area = total_area / total_njets;
-  sigma  = error * sqrt(mean_area);
+  sigma  = error * sqrt( max(0.0, mean_area) );
 }
 
 

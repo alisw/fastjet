@@ -4,7 +4,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -345,6 +345,23 @@ class ClusterSequence {
     _do_iB_recombination_step(jet_i, diB);
   }
 
+  /// return a non-const reference to the jets()[i], to allow plugins to
+  /// modify its contents. 
+  ///
+  /// It can only be called when the plugin is activated.
+  ///
+  /// If you reset the jet (or set it equal to another one) you _must_
+  /// ensure that final jet is given the structure_shared_ptr of the
+  /// original jet, otherwise you will end up with an inconsistent
+  /// ClusterSequence. 
+  ///
+  /// ONLY USE THIS IF YOU ARE SURE YOU KNOW WHAT YOU ARE DOING (contact
+  /// FJ authors if you think you need this but are unsure)
+  PseudoJet & plugin_non_const_jet(unsigned i) {
+    assert(plugin_activated());
+    return _jets[i];
+  }
+
   /// @ingroup extra_info
   /// \class Extras
   /// base class to store extra information that plugins may provide
@@ -414,33 +431,39 @@ public:
   /// 
   /// (see vector _history below).
   struct history_element{
-    int parent1; /// index in _history where first parent of this jet
-                 /// was created (InexistentParent if this jet is an
-                 /// original particle)
+    /// index in _history where first parent of this jet
+    /// was created (InexistentParent if this jet is an
+    /// original particle)
+    int parent1; 
 
-    int parent2; /// index in _history where second parent of this jet
-                 /// was created (InexistentParent if this jet is an
-                 /// original particle); BeamJet if this history entry
-                 /// just labels the fact that the jet has recombined
-                 /// with the beam)
+    /// index in _history where second parent of this jet
+    /// was created (InexistentParent if this jet is an
+    /// original particle); BeamJet if this history entry
+    /// just labels the fact that the jet has recombined
+    /// with the beam)
+    int parent2; 
 
-    int child;   /// index in _history where the current jet is
-		 /// recombined with another jet to form its child. It
-		 /// is Invalid if this jet does not further
-		 /// recombine.
+    /// index in _history where the current jet is
+		/// recombined with another jet to form its child. It
+		/// is Invalid if this jet does not further
+		/// recombine.
+    int child;   
 
-    int jetp_index; /// index in the _jets vector where we will find the
-                 /// PseudoJet object corresponding to this jet
-                 /// (i.e. the jet created at this entry of the
-                 /// history). NB: if this element of the history
-                 /// corresponds to a beam recombination, then
-                 /// jetp_index=Invalid.
+    /// index in the _jets vector where we will find the
+    /// PseudoJet object corresponding to this jet
+    /// (i.e. the jet created at this entry of the
+    /// history). NB: if this element of the history
+    /// corresponds to a beam recombination, then
+    /// jetp_index=Invalid.
+    int jetp_index; 
 
-    double dij;  /// the distance corresponding to the recombination
-		 /// at this stage of the clustering.
+    /// the distance corresponding to the recombination
+    /// at this stage of the clustering.
+    double dij;  
 
-    double max_dij_so_far; /// the largest recombination distance seen
-			   /// so far in the clustering history.
+    /// the largest recombination distance seen
+    /// so far in the clustering history.
+    double max_dij_so_far; 
   };
 
   enum JetType {Invalid=-3, InexistentParent = -2, BeamJet = -1};
@@ -927,6 +950,11 @@ protected:
     double nx, ny, nz;  // our internal storage for fast distance calcs
   };
 
+  /// identical to EEBriefJet, but the corresponding distance
+  /// calculation (_bj_dist) is overloaded to use the more accurate
+  /// cross-product approach
+  class EEAccurateBriefJet : public EEBriefJet { };
+
   /// to help instantiation (fj 2.4.0; did not quite work on gcc 33 and os x 10.3?)
   //void _dummy_N2_cluster_instantiation();
 
@@ -935,6 +963,7 @@ protected:
   void _simple_N2_cluster_BriefJet();
   /// to avoid issues with template instantiation (OS X 10.3, gcc 3.3)
   void _simple_N2_cluster_EEBriefJet();
+  void _simple_N2_cluster_EEAccurateBriefJet();
 };
 
 

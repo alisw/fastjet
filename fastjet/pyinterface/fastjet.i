@@ -138,7 +138,10 @@ static PyObject * FastJetError_;
 
 // include FastJetError in python module
 %pythoncode {
-  from _fastjet import FastJetError
+  if __package__ or "." in __name__:
+    from ._fastjet import FastJetError
+  else:
+    from _fastjet import FastJetError
 }
 
 FASTJET_ERRORS_AS_PYTHON_EXCEPTIONS(fastjet)

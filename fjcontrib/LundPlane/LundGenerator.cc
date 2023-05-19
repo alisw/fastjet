@@ -1,6 +1,7 @@
-// $Id: LundGenerator.cc 1153 2018-08-22 11:56:35Z frdreyer $
+// $Id: LundGenerator.cc 1345 2023-03-01 08:49:41Z salam $
 //
-// Copyright (c) -, Frederic A. Dreyer, Gavin P. Salam, Gregory Soyez
+// Copyright (c) 2018-, Frederic A. Dreyer, Keith Hamilton, Alexander Karlberg,
+// Gavin P. Salam, Ludovic Scyboz, Gregory Soyez, Rob Verheyen
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet contrib.

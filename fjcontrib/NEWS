@@ -1,3 +1,33 @@
+2023-05-18: release of 1.052 with
+* update of ConstituentSubtractor to v1.4.6, which brings small bug fixes
+
+2023-03-01: release of 1.051 with
+* new KTClusCXX (1.0.1), a C++ re-implementation of the interface and
+  features of Mike Seymour's Fortran ktclus package (including
+  DIS algorithms and various hadron-collider distance measures). 
+  Provided by Andrii Verbytskyi
+* Update of LundPlane to 2.0.3, to fix missing header installation
+
+2022-08-20: release of 1.050 with
+* updated LundPlane to 2.0.2, fixing compilation issues with g++-12
+
+2022-06-15: release of 1.049 with
+* updated Nsubjettiness to 2.2.6, with thread-safety improvements
+
+2021-12-08: release of 1.048 with
+* inclusion of C++11 check files (fixes bug reported by Andrii Verbytskyi)
+
+2021-12-06: release of 1.047 with LundPlane updated to v2.0.1
+* adds RecursiveLundEEGenerator for e+e- studies, with examples
+  from spin-correlation analyses of arXiv:2103.16526 and
+  arXiv:2111.01161
+* Note: fjcontrib now requires a compiler that supports C++11 or higher.
+  The configure scripts attempts to add CXXFLAGS arguments to enable this
+  if not already enabled. Please report any issues you encounter.
+
+2021-08-21: release of 1.046 with RecursiveTools updated to v2.0.1
+* added rare divide-by-zero in calculation of mu2
+
 2020-08-04: release of 1.045 with
 * first release of Centauro (DIS jet algorithm plugin), v 1.0.0
 

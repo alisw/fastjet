@@ -1,7 +1,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -73,19 +73,13 @@ PseudoJet & PseudoJet::operator=(const PseudoJet & other_pj){
   _structure = other_pj._structure;
   _user_info = other_pj._user_info;
 
-  _kt2 = other_pj._kt2; 
   _cluster_hist_index = other_pj._cluster_hist_index;
   _user_index = other_pj._user_index;
 
-  _px = other_pj._px;
-  _py = other_pj._py;
-  _pz = other_pj._pz;
-  _E  = other_pj._E;
-
-  _phi = other_pj._phi; 
-  _rap = other_pj._rap;
-
-  _init_status.store(other_pj._init_status);
+  // copy the remaining information through the reset_momentum call
+  // which properly handles the thread safety, notably related
+  // to caching of the phi and rap values
+  reset_momentum(other_pj);
   
   return *this;
 }
@@ -157,24 +151,19 @@ void PseudoJet::_ensure_valid_rap_phi() const{
                                              std::memory_order_seq_cst,
                                              std::memory_order_relaxed)){
       _set_rap_phi();
-      _init_status = Init_Done; // can safely be done after all physics varlables are set
+      // Now we can safely set the status flag to Init_Done (after all
+      // physics variables are set). The memory ordering guarantees
+      // synchronisation across threads.
+      _init_status.store(Init_Done, memory_order_release); 
     } else {
       // wait until done
-      do{
-        // the operation below will reset expected to whatever is in
-        // init_state if the test fails, so we need to reset it to
-        // the 1 (aka init_done) we want!
-        expected = Init_Done;
- 
-        // the next line
-        // - here we could potentially use the weak form
-        // - on success the value is unchanged so I think we can use relaxed ordering
-        // - expected will be reinitialised anyway so again, relaxed ordering should be fi
-
-        //} while (!_init_state.compare_exchange_strong(expected, 1));
-      } while (!_init_status.compare_exchange_weak(expected, Init_Done,
-                                                   std::memory_order_relaxed,
-                                                   std::memory_order_relaxed));
+      //
+      // Here we use memory_order_acquire to guarantee that the
+      // rap/phi values set in the thread which actually does the
+      // calculation are synchronised.
+      // Reading https://gcc.gnu.org/wiki/Atomic/GCCMM/AtomicSync in
+      // interesting in this context.
+      while (_init_status.load(memory_order_acquire) != Init_Done);
     }
     
   }

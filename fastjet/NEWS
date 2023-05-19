@@ -2,6 +2,39 @@ Release Notes for FastJet
 -------------------------
 
 ================================================================
+Summary of changes from v3.4.0 -> v3.4.1: 2023-05-02
+================================================================
+
+New features:
+
+* JetDefinition has a new clustering strategy, N2PlainEEAccurate,
+  intended to work with the ee_kt_algorithm and ee_genkt_algorithms. It
+  replaces the dot-product evaluation of (1-cos(theta)) with a more
+  accurate cross-product evaluation when two particles are close in
+  angle (~10^{-4}). It has a timing penalty of ~15% but can calculate
+  inter-particle angles down to ~epsilon rather than sqrt(epsilon),
+  where epsilon is machine precision. This work has been ported from
+  PanScales.
+
+* two new functions to make it possible for plugin algorithms to modify
+  user info, as needed for modern flavoured jet-clustering algorithms:
+  . PseudoJet::set_user_info_shared_ptr(...), to allow user info to
+    easily be copied from one jet to another and
+  . ClusterSequence::plugin_non_const_jet(...) to get non-const access
+    to the initial jets.
+
+Bug fixes:
+
+* Resolved MAJOR BUG that arose with full thread-safety enabled
+  (reported by Ludo Scyboz), where PseudoJet::reset_momentum and
+  PseudoJet::operator= failed to update internally cached values of
+  phi() and rap(). In some instances related issues could also lead to
+  race conditions.
+
+* eliminated NaN from square-root of negative mean areas in background
+  estimation (now returns zero)
+
+================================================================
 Summary of changes from v3.3.4 -> v3.4.0: 2021-06-25
 ================================================================
 New features:

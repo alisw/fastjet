@@ -1,3 +1,8 @@
+2023/05/11: release of version 1.4.6:
+        - Fixed a bug for jet-by-jet Constituent Subtractor when using particle selector
+        - Copying also user_info for the corrected jet and corrected constituents
+        - Initializing previously not initialized variables (caused a FPE warning in ATLAS)
+
 2020/02/23: release of version 1.4.5:
         - Further removal of C++11 extensions which were missed previously
 
@@ -8,8 +13,7 @@
 
 2019/07/09: release of version 1.4.3:
         - Removed C++11	extensions
-        - Changed the way how the user should specify that he/she wants to do delta_m correction. Now, additionally the	"set_do_mass_correction" function must be cal
-led
+        - Changed the way how the user should specify that he/she wants to do delta_m correction. Now, additionally the	"set_do_mass_correction" function must be called
         - Updated information about the options for the treatment of massive inputs.
 
 

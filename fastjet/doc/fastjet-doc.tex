@@ -81,7 +81,7 @@
 
 \title{\sf FastJet user manual%
   \\ \large (for version
-  3.4.0%  %%%-VERSION-NUMBER (do not remove this comment; used
+  3.4.1%  %%%-VERSION-NUMBER (do not remove this comment; used
              %  for automatic version-number changes; version number must
              %  stay one a single line)
   )
@@ -1638,6 +1638,26 @@ consisting of all the particles in the event.
 In such a context it is only the \ttt{exclusive\_jets(...)} call that
 provides non-trivial information.
 
+
+%
+Note that the default clustering strategy (\ttt{N2Plain}) evaluates
+$1- \cos\theta_{ij}$ using a dot product between normalised
+four-vectors.
+%
+Rounding error case this to break down when
+$\theta_{ij} \lesssim \sqrt{\epsilon}$, where $\epsilon$ is the
+machine precision.
+%
+For applications where it is important to have reliable clustering for
+particles at angles smaller than $\sqrt{\epsilon}$, one should use the
+\ttt{N2PlainEEAccurate} strategy, which uses a cross-product to
+determine $\theta_{ij}$ for $\theta_{ij} \lesssim \epsilon^{1/4}$.
+%
+It pushes the breakdown point to $\theta_{ij} \sim \epsilon$, though
+it is about $15\%$ slower.
+%
+
+
 %......................................................................
 \subsection[$k_t$ algorithm for $e^+e^-$ collisions]
 {$\boldsymbol{k_t}$ algorithm for $\boldsymbol{e^+e^-}$ collisions}
@@ -1668,6 +1688,10 @@ $p=1$ gives a clustering sequence that is identical to that of the
 %
 The normalisation of the $d_{ij}$'s will however be different.
 
+As with the algorithms of section~\ref{sec:ee-algs} the default
+strategy is \ttt{N2Plain}, but for applications with particles at
+particularly small angles to each other, the \ttt{N2PlainEEAccurate}
+strategy should instead be used.
 
 %======================================================================
 \section{Plugin jet algorithms}
@@ -5264,6 +5288,15 @@ single-jet reclustering.
 Should users have applications where such improvements are
 critical, they are encouraged to contact the \fastjet authors.
 
+A final comment concerns the native $e^+e^-$ algorithms (\ttt{eekt}
+and \ttt{ee\_genkt}).
+%
+By default these always use an \ttt{N2Plain} strategy.
+%
+A more accurate \ttt{N2PlainEEAccurate} strategy is also available, as
+discussed in section~\ref{sec:ee-algs}, with a speed penalty of about
+$15\%$.
+ 
 %======================================================================
 \section{User Info in PseudoJets}
 \label{app:user-info}

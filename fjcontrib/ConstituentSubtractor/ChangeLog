@@ -1,3 +1,13 @@
+2023-05-11  Peter Berta  <peter.berta@cern.ch>
+
+	* VERSION:
+	- Set version number to 1.4.6
+
+	* ConstituentSubtractor.cc
+        - Fixed a bug for jet-by-jet Constituent Subtractor when using particle selector
+        - Copying also user_info for the corrected jet and corrected constituents
+        - Initializing previously not initialized variables (_nearby_hard_radius, _nearby_hard_factor)
+
 2020-02-23  Peter Berta  <peter.berta@cern.ch>
 
 	* VERSION:

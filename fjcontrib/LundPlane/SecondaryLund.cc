@@ -1,6 +1,7 @@
-// $Id: SecondaryLund.cc 1146 2018-08-21 13:46:07Z frdreyer $
+// $Id: SecondaryLund.cc 1345 2023-03-01 08:49:41Z salam $
 //
-// Copyright (c) 2018-, Frederic A. Dreyer, Gavin P. Salam, Gregory Soyez
+// Copyright (c) 2018-, Frederic A. Dreyer, Keith Hamilton, Alexander Karlberg,
+// Gavin P. Salam, Ludovic Scyboz, Gregory Soyez, Rob Verheyen
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet contrib.
@@ -33,7 +34,7 @@ namespace contrib{
 /// retrieve the vector of declusterings of the secondary plane of a jet
 int SecondaryLund_mMDT::result(const std::vector<LundDeclustering>& declusts) const {
   // iterate through primary branchings
-  for (int i=0; i < declusts.size(); ++i) {
+  for (unsigned int i=0; i < declusts.size(); ++i) {
     // mMDTZ: find the first emission passing z>zcut
     if (declusts[i].z() > zcut_) return i;
   }
@@ -46,7 +47,7 @@ int SecondaryLund_dotmMDT::result(const std::vector<LundDeclustering>& declusts)
   double dot_prod_max   = 0.0;
   
   // iterate through primary branchings
-  for (int i=0; i < declusts.size(); ++i) {
+  for (unsigned int i=0; i < declusts.size(); ++i) {
     // dotmMDTZ: find emission passing z>zcut with largest dot product
     if (declusts[i].z() > zcut_) {
       double dot_prod = declusts[i].harder().pt()*declusts[i].softer().pt()
@@ -69,7 +70,7 @@ int SecondaryLund_Mass::result(const std::vector<LundDeclustering>& declusts) co
   double mass_diff     = std::numeric_limits<double>::max();
   
   // iterate through primary branchings
-  for (int i=0; i < declusts.size(); ++i) {
+  for (unsigned int i=0; i < declusts.size(); ++i) {
     // Mass: find emission that minimises the distance to reference mass
     double dist =
       std::abs(log(declusts[i].harder().pt()*declusts[i].softer().pt()

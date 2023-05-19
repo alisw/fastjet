@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 #
 #----------------------------------------------------------------------
-# $Id: example.py 1157 2018-08-22 20:11:52Z frdreyer $
+# $Id: example.py 1345 2023-03-01 08:49:41Z salam $
 #
-# Copyright (c) -, Frederic A. Dreyer, Gavin P. Salam, Gregory Soyez
+# Copyright (c) 2018-, Frederic A. Dreyer, Keith Hamilton, Alexander Karlberg,
+# Gavin P. Salam, Ludovic Scyboz, Gregory Soyez, Rob Verheyen
 #
 #----------------------------------------------------------------------
 # This file is part of FastJet contrib.
@@ -25,8 +26,8 @@
 # Load a sample file and plot it.
 #
 # Usage:
-#   python3 plot_lund.py [--file filename] [--bkg file_bkg]
-#                        [--njet njet]  [--npxl npixels]
+#   python3 example.py [--file filename] [--bkg file_bkg]
+#                      [--njet njet]  [--npxl npixels]
 #
 
 import read_lund_json as lund

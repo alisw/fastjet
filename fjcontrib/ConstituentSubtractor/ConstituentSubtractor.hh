@@ -1,4 +1,4 @@
-// $Id: ConstituentSubtractor.hh 1240 2020-02-23 13:51:05Z peter.berta $
+// $Id: ConstituentSubtractor.hh 1233 2019-07-15 12:47:19Z peter.berta $
 //
 // ConstituentSubtractor package
 // Questions/comments: berta@ipnp.troja.mff.cuni.cz, Martin.Spousta@cern.ch, David.W.Miller@uchicago.edu

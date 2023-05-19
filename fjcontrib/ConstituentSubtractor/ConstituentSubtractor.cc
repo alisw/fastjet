@@ -1,4 +1,4 @@
-// $Id: ConstituentSubtractor.cc 1240 2020-02-23 13:51:05Z peter.berta $
+// $Id: ConstituentSubtractor.cc 1352 2023-05-12 08:36:24Z peter.berta $
 //
 // ConstituentSubtractor package
 // Questions/comments: berta@ipnp.troja.mff.cuni.cz, Martin.Spousta@cern.ch, David.W.Miller@uchicago.edu, Rupert.Leitner@mff.cuni.cz
@@ -63,6 +63,8 @@ LimitedWarning ConstituentSubtractor::_warning_unused_rhom;
     _hard_proxies=0;
     _ghost_selector=0;
     _particle_selector=0;
+    _nearby_hard_radius=-1;
+    _nearby_hard_factor=-1;
   }
 
 
@@ -90,6 +92,8 @@ LimitedWarning ConstituentSubtractor::_warning_unused_rhom;
     _hard_proxies=0;
     _ghost_selector=0;
     _particle_selector=0;
+    _nearby_hard_radius=-1;
+    _nearby_hard_factor=-1;
   }
 
 
@@ -118,6 +122,8 @@ LimitedWarning ConstituentSubtractor::_warning_unused_rhom;
     _hard_proxies=0;
     _ghost_selector=0;
     _particle_selector=0;
+    _nearby_hard_radius=-1;
+    _nearby_hard_factor=-1;
   }
 
 
@@ -177,12 +183,13 @@ LimitedWarning ConstituentSubtractor::_warning_unused_rhom;
     }
 
     std::vector<fastjet::PseudoJet> backgroundProxies=this->get_background_proxies_from_ghosts(ghosts,ghosts_area);
-    std::vector<fastjet::PseudoJet> subtracted_particles=this->do_subtraction(particles,backgroundProxies);
+    std::vector<fastjet::PseudoJet> subtracted_particles=this->do_subtraction(selected_particles,backgroundProxies);
     if (_particle_selector) subtracted_particles.insert(subtracted_particles.end(), unselected_particles.begin(), unselected_particles.end());
     fastjet::PseudoJet subtracted_jet=join(subtracted_particles);
     subtracted_jet.set_user_index(jet.user_index());
+    subtracted_jet.user_info_shared_ptr() = jet.user_info_shared_ptr();
 
-    return subtracted_jet;    
+    return subtracted_jet;
   }
 
 
@@ -570,6 +577,8 @@ LimitedWarning ConstituentSubtractor::_warning_unused_rhom;
 	//	std::cout << "after correction: " << subtracted_const.pt() << "  " << subtracted_const.eta() << "  " << subtracted_const.rap() << "  " << subtracted_const.m() << std::endl;  
       }
       subtracted_const.set_user_index(particles_sorted[i].user_index());
+      subtracted_const.user_info_shared_ptr() = particles_sorted[i].user_info_shared_ptr();
+
       subtracted_particles.push_back(subtracted_const);
     }
     

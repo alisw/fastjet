@@ -1,4 +1,4 @@
-// $Id: example_event_wide.cc 1240 2020-02-23 13:51:05Z peter.berta $
+// $Id: example_event_wide.cc 1231 2019-07-09 09:18:06Z peter.berta $
 //
 //----------------------------------------------------------------------
 // Example on how to do pileup correction on the whole event

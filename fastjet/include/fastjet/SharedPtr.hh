@@ -4,7 +4,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -315,7 +315,7 @@ inline bool operator!=(SharedPtr<T> const & t, SharedPtr<U> const & u){
   return t.get() != u.get();
 }
 
-/// comparison: orgering
+/// comparison: ordering
 template<class T,class U>
 inline bool operator<(SharedPtr<T> const & t, SharedPtr<U> const & u){
   return t.get() < u.get();
@@ -608,7 +608,7 @@ inline bool operator!=(SharedPtr<T> const & t, SharedPtr<U> const & u){
   return t.get() != u.get();
 }
 
-/// comparison: orgering
+/// comparison: ordering
 template<class T,class U>
 inline bool operator<(SharedPtr<T> const & t, SharedPtr<U> const & u){
   return t.get() < u.get();

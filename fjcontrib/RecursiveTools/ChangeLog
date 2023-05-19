@@ -1,3 +1,16 @@
+2021-08-21 Sat  <gavin.salam@physics.ox.ac.uk>
+
+	* NEWS:
+	* VERSION:
+	Changed version to 2.0.1 in preparation for release.
+
+2021-08-16 Mon  <gavin.salam@physics.ox.ac.uk>
+
+	* RecursiveSymmetryCutBase.cc:
+	added fix for issue signalled by Pierre-Antoine Delsart 
+	(rare divide by zero in calculation of mu2; now mu2 gets set to -1
+	when the parent mass is <= 0)
+
 2018-11-02  Jesse Thaler  <jthaler@jthaler.net>
 
 	* AUTHORS:  updated journal for RecursiveSoftDrop

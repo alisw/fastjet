@@ -1,7 +1,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -75,8 +75,9 @@ void BackgroundEstimatorBase::_median_and_stddev(const vector<double> & quantity
   // empty area can sometimes be negative; with small ranges this can
   // become pathological, so warn the user
   int n_jets_used = sorted_quantity_vector.size();
-  if (n_empty_jets < -n_jets_used/4.0)
+  if (n_empty_jets < -n_jets_used/4.0) {
     _warnings_empty_area.warn("BackgroundEstimatorBase::_median_and_stddev(...): the estimated empty area is suspiciously large and negative and may lead to an over-estimation of rho. This may be due to (i) a rare statistical fluctuation or (ii) too small a range used to estimate the background properties.");
+  }
 
   // now get the median & error, accounting for empty jets;
   // define the fractions of distribution at median, median-1sigma

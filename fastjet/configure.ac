@@ -1,4 +1,4 @@
-AC_INIT([FastJet],[3.4.0])
+AC_INIT([FastJet],[3.4.1])
 AC_CONFIG_SRCDIR([src/JetDefinition.cc])
 AM_INIT_AUTOMAKE(tar-ustar)
 
@@ -146,9 +146,9 @@ dnl This requires the --disable-auto-ptr option
 dnl which is currently not the default but will become in a future
 dnl release (or might disappear altogether)
 AC_ARG_ENABLE(auto-ptr,
-	[  --enable-auto-ptr  compile the deprecated parts of the interface using auto-ptr [default=yes]],
+	[  --enable-auto-ptr  compile the deprecated parts of the interface using auto-ptr [default=no]],
 	[ENABLE_AUTO_PTR_INTERFACE="$enableval"],
-	[ENABLE_AUTO_PTR_INTERFACE="yes"])
+	[ENABLE_AUTO_PTR_INTERFACE="no"])
 if [[ "$ENABLE_AUTO_PTR_INTERFACE" == "yes" ]] ; then
    AC_DEFINE(HAVE_AUTO_PTR_INTERFACE, [], [compile the deprecated parts of the interface using auto-ptr])   
 fi

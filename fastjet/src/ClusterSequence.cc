@@ -1,7 +1,7 @@
 //FJSTARTHEADER
 // $Id$
 //
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2023, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
 // This file is part of FastJet.
@@ -277,8 +277,6 @@ void ClusterSequence::_initialise_and_run_no_decant () {
     return;
   } else if (_jet_algorithm == ee_kt_algorithm ||
 	     _jet_algorithm == ee_genkt_algorithm) {
-    // ignore requested strategy
-    _strategy = N2Plain;
     if (_jet_algorithm == ee_kt_algorithm) {
       // make sure that R is large enough so that "beam" recomb only
       // occurs when a single particle is left
@@ -303,7 +301,14 @@ void ClusterSequence::_initialise_and_run_no_decant () {
       }
       _invR2 = 1.0/_R2;
     }
-    _simple_N2_cluster_EEBriefJet();
+    // choose the appropriate strategy
+    if (_strategy == N2PlainEEAccurate) {
+      _simple_N2_cluster_EEAccurateBriefJet();      
+    } else {
+      // otherwise we revert to the default strategy
+      _strategy = N2Plain;
+      _simple_N2_cluster_EEBriefJet();
+    }
     return;
   } else if (_jet_algorithm == undefined_jet_algorithm) {
     throw Error("A ClusterSequence cannot be created with an uninitialised JetDefinition");
@@ -573,6 +578,8 @@ string ClusterSequence::strategy_string (Strategy strategy_in)  const {
     strategy = "NlnN4pi"; break;
   case N2Plain:
     strategy = "N2Plain"; break;
+  case N2PlainEEAccurate:
+    strategy = "N2PlainEEAccurate"; break;
   case N2Tiled:
     strategy = "N2Tiled"; break;
   case N2MinHeapTiled:

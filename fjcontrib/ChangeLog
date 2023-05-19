@@ -1,3 +1,74 @@
+2023-05-18  Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* VERSION:
+	* NEWS:
+	prepared for release of 1.052
+
+	* contribs.svn:
+	updated ConstituentSubtractor to 1.4.6
+
+2023-03-01 Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* NEWS:
+	* VERSION
+	Preparing for release of fjcontrib-1.051
+
+	* contribs.svn:
+	added KTClusCXX 1.0.1
+	updated LundPlane to 2.0.3
+
+2022-08-20 S<gavin.salam@physics.ox.ac.uk>
+
+	* NEWS:
+	* VERSION
+	Preparing for release of fjcontrib-1.050
+
+	* contribs.svn:
+	updated LundPlane to 2.0.2
+
+2022-06-15  Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* NEWS:
+	* VERSION
+	Preparing for release of fjcontrib-1.049
+
+	* contribs.svn:
+	updated Nsubjettiness to 2.26
+
+2021-12-08  Gregory Soyez  <soyez@fastjet.fr>
+
+	* NEWS:
+	* VERSION:
+	Preparing for the release of fjcontrib-1.048
+
+	* scripts/internal/release-fjcontrib.sh:
+	included the script directory in the tarball and the
+	DEVEL-GUIDELINES.
+	This fixes issue that scripts/c1checks was absent
+	from the tarball
+
+2021-12-06  Gavin Salam  <gavin.salam@physics.ox.ac.uk>
+
+	* VERSION:
+	* NEWS:
+	* contribs.svn:
+	updated LundPlane to 2.0.1 and prepared for release of
+	fjcontrib-1.047
+
+	* configure:
+	* scripts/c11check/Makefile:
+	* scripts/c11check/c11check.cc:
+	added facilities for checking if we have c++11
+	support and adding it in if need be
+
+2021-08-21 Sat  <gavin.salam@physics.ox.ac.uk>
+
+	* NEWS:
+	* VERSION:
+	* contribs.svn:
+	updated RecursiveTools to 2.0.1 and prepared for release
+	of fjcontrib-1.046
+
 2020-08-04 Tue  <gavin.salam@physics.ox.ac.uk>
 
 	* NEWS:
