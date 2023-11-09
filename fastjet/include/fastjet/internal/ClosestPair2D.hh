@@ -107,7 +107,6 @@ private:
 
   static const unsigned int _nshift = 3;
 
-  class Point; // will be defined below
 
   /// since sets of three objects will crop up repeatedly, useful
   /// to have a triplet class?
@@ -118,8 +117,7 @@ private:
   private:
     T _contents[_nshift];
   };
-
-
+  class Point;
   /// class that will take care of ordering of shuffles for us
   class Shuffle {
   public:
@@ -133,6 +131,34 @@ private:
   typedef Tree::circulator        circulator;
   typedef Tree::const_circulator  const_circulator;
 
+  //----------------------------------------------------------------------
+  /// \if internal_doc
+  /// @ingroup internal
+  /// \class ClosestPair2D::Point
+  /// class for representing all info needed about a point
+  /// \endif
+  class Point {
+  public:
+    /// the point's coordinates
+    Coord2D coord;
+    /// a pointer to its closest neighbour in our structure
+    Point * neighbour;
+    /// the corresponding squared distance
+    double  neighbour_dist2;
+    /// circulators for each of the shifts of the shuffles
+    triplet<circulator> circ;
+
+    /// indicates that something special is currently happening to this point
+    unsigned int review_flag;
+
+    /// returns the distance between two of these objects
+    double distance2(const Point & other) const {
+      return coord.distance2(other.coord);
+    };
+
+    /// creates a shuffle for us with a given shift
+    //void set_shuffle(Shuffle & shuffle);
+  };
 
   triplet<SharedPtr<Tree> >  _trees;
   SharedPtr<MinHeap>     _heap;
@@ -185,34 +211,6 @@ private:
 };
 
 
-//----------------------------------------------------------------------
-/// \if internal_doc
-/// @ingroup internal
-/// \class ClosestPair2D::Point
-/// class for representing all info needed about a point
-/// \endif
-class ClosestPair2D::Point {
-public:
-  /// the point's coordinates
-  Coord2D coord;
-  /// a pointer to its closest neighbour in our structure
-  Point * neighbour;
-  /// the corresponding squared distance
-  double  neighbour_dist2;
-  /// circulators for each of the shifts of the shuffles
-  triplet<circulator> circ;
-
-  /// indicates that something special is currently happening to this point
-  unsigned int review_flag;
-
-  /// returns the distance between two of these objects
-  double distance2(const Point & other) const {
-    return coord.distance2(other.coord);
-  };
-
-  /// creates a shuffle for us with a given shift
-  //void set_shuffle(Shuffle & shuffle);
-};
 
 
 //----------------------------------------------------------------------
