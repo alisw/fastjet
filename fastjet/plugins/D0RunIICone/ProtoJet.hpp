@@ -195,7 +195,7 @@ void ProtoJet<Item>::NowStable() {
 
 template<class Item>
 void ProtoJet<Item>::print(std::ostream& os) const {
-  os<<"y phi Et = ("<<_y<<", "<<_phi<<", "<<this->_Et<<")"<<std::endl;
+  os<<"y phi Et = ("<<_y<<", "<<_phi<< ")"<<std::endl;
   os<< " members= " << std::endl;
   typename std::list<const Item*>::const_iterator i;
   for(i = _LItems.begin(); i != _LItems.end(); ++i)
